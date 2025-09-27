@@ -1,3 +1,4 @@
+# analytics.py
 analytics = []
 
 def record_event(event: dict):

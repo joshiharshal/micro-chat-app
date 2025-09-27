@@ -11,3 +11,8 @@ def post_message(msg: dict):
 @app.get("/messages")
 def list_messages():
     return get_messages()
+
+# Health check
+@app.get("/health")
+def health():
+    return {"status": "ok"}

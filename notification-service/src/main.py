@@ -7,3 +7,8 @@ app = FastAPI()
 def notify(msg: dict):
     send_notification(msg.get("message", ""))
     return {"status": "sent"}
+
+# Health check endpoint
+@app.get("/health")
+def health():
+    return {"status": "ok"}

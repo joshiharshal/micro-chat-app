@@ -1,7 +1,15 @@
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from fastapi import APIRouter
 
 router = APIRouter()
+
+# Health check endpoint
+@router.get("/health")
+def health():
+    return {"status": "ok"}
+
+# Existing login route
+from pydantic import BaseModel
+from fastapi import HTTPException
 
 class UserLogin(BaseModel):
     username: str

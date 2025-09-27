@@ -6,3 +6,7 @@ app = FastAPI()
 @app.websocket("/ws")
 async def websocket_route(websocket: WebSocket):
     await websocket_endpoint(websocket)
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}

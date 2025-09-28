@@ -2,7 +2,9 @@ from fastapi import FastAPI
 from routes_user import router
 
 app = FastAPI()
-app.include_router(router)
+
+# Mount router with /users prefix to match nginx routing
+app.include_router(router, prefix="/users")
 
 @app.get("/health")
 def health():

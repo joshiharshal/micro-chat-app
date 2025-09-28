@@ -96,6 +96,15 @@
         const inputEl = document.getElementById('message-input');
         const sendBtn = document.getElementById('send-btn');
 
+        // Use WebSocket via gateway
+        const ws = new WebSocket("ws://localhost:8090/ws/"); // <-- note trailing slash
+
+        ws.onmessage = (event) => addMessage(event.data, false);
+
+        ws.onopen = () => console.log("Connected to chat server");
+
+        ws.onerror = (err) => console.error("WebSocket error:", err);
+
         function addMessage(text, user=false) {
             const msgEl = document.createElement('div');
             msgEl.className = 'message' + (user ? ' user' : '');
@@ -104,16 +113,18 @@
             messagesEl.scrollTop = messagesEl.scrollHeight;
         }
 
-        sendBtn.addEventListener('click', () => {
-            if (inputEl.value.trim() !== '') {
-                addMessage(inputEl.value, true);
-                // Here you can send the message to your backend WebSocket/chat service
-                inputEl.value = '';
+        function sendMessage() {
+            const msg = inputEl.value.trim();
+            if (msg) {
+                addMessage(msg, true);
+                ws.send(msg);
+                inputEl.value = "";
             }
-        });
+        }
 
+        sendBtn.addEventListener('click', sendMessage);
         inputEl.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') sendBtn.click();
+            if (e.key === 'Enter') sendMessage();
         });
     </script>
 </body>

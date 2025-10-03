@@ -102,3 +102,4 @@ curl http://media-service:8000/
 
 # Analytics service
 curl http://analytics-service:8000/metrics
+    

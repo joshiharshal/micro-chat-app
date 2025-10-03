@@ -1,7 +1,8 @@
 async function loadProfile() {
-  const res = await fetch("/api/user/profile", {
-    headers: { "Authorization": "Bearer " + localStorage.getItem("username") }
-  });
+  const res = await fetch("/users/profile", {
+  headers: { "Authorization": "Bearer " + localStorage.getItem("username") }
+});
+
 
   if (res.ok) {
     const profile = await res.json();

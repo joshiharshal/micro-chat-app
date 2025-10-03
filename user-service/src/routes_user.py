@@ -1,13 +1,18 @@
 from fastapi import APIRouter
 
 router = APIRouter()
-
 users = []
 
 @router.post("/register")
 def register_user(user: dict):
     users.append(user)
     return {"message": "User registered successfully", "user_id": len(users)-1}
+
+@router.get("/profile")
+def profile():
+    if not users:
+        return {"error": "No users registered"}
+    return users[0]
 
 @router.get("/")
 def get_users():

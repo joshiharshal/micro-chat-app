@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ApexChat - Login & Register</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Global box-sizing to prevent padding/margin overflow */
+        * {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #6366f1;
+            --bg-color: #f8fafc;
+            --text-primary: #1e293b;
+        }
+        [data-theme="dark"] {
+            --bg-color: #0f0f23;
+            --text-primary: #f8fafc;
+        }
+        body {
+            background: linear-gradient(135deg, var(--primary-color), #8b5cf6);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            position: relative;
+            overflow: hidden; /* No scrolling on the entire page (x or y) */
+        }
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 10;
+        }
+        /* Flip Card Styles - No Overflow/Scrolling */
+        .flip-container {
+            perspective: 1000px;
+            width: 100%;
+            max-width: 400px;
+        }
+        .flip-card {
+            position: relative;
+            width: 100%;
+            height: 520px; /* Slightly increased for better fit without scrolling */
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            display: flex;
+            flex-direction: column; /* Ensure vertical distribution */
+        }
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 1.5rem; /* Reduced padding for tighter fit */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Start from top to fit content */
+            align-items: center;
+            overflow: hidden; /* No scrolling - hidden overflow */
+            word-wrap: break-word; /* Ensure text wraps */
+            max-height: 100%; /* Prevent expansion beyond card */
+        }
+        [data-theme="dark"] .flip-card-front,
+        [data-theme="dark"] .flip-card-back {
+            background: rgba(26, 26, 46, 0.95);
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+        .form-title {
+            margin-bottom: 0.5rem; /* Reduced margin */
+            font-size: 1.25rem; /* Smaller title for space */
+        }
+        .subtitle {
+            margin-bottom: 0.5rem; /* Reduced subtitle margin */
+            font-size: 0.9rem;
+        }
+        .btn-auth {
+            background: var(--primary-color);
+            border: none;
+            width: 100%;
+            margin-top: 0.5rem; /* Reduced top margin */
+            margin-bottom: 0.5rem; /* Add bottom margin for spacing */
+        }
+        .btn-auth:hover {
+            background: #8b5cf6;
+        }
+        .flip-link-section {
+            margin-top: 0.5rem; /* Reduced top margin */
+            font-size: 0.85rem; /* Smaller text for space */
+        }
+        .flip-link {
+            color: var(--primary-color);
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        .flip-link:hover {
+            color: #8b5cf6;
+        }
+        .error-msg {
+            color: #dc3545;
+            font-size: 0.8rem; /* Smaller error text */
+            margin-top: 0.25rem;
+            display: none;
+            word-wrap: break-word;
+        }
+        /* Form elements to ensure no overflow and compact sizing */
+        .form-label {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            font-size: 0.9rem; /* Smaller labels */
+            margin-bottom: 0.25rem; /* Tighten label-input gap */
+        }
+        .form-control {
+            width: 100%;
+            max-width: 100%;
+            padding: 0.5rem; /* Reduced input padding for compactness */
+            font-size: 0.9rem;
+            min-height: 38px; /* Fixed smaller height */
+        }
+        .icon {
+            margin-bottom: 0.5rem; /* Reduced icon margin */
+            font-size: 2rem; /* fa-2x equivalent */
+        }
+        @media (max-width: 480px) {
+            .flip-card-front, .flip-card-back {
+                padding: 1rem; /* Further reduced on small screens */
+            }
+            .form-label, .form-control {
+                font-size: 0.85rem;
+            }
+            .form-title {
+                font-size: 1.1rem;
+            }
+            .flip-link-section {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme"><i class="fas fa-moon"></i></button>
+    
+    <div class="flip-container">
+        <div class="flip-card" id="flipCard">
+            <div class="flip-card-inner">
+                <!-- Front: Login Form -->
+                <div class="flip-card-front">
+                    <i class="fas fa-comments icon text-primary"></i>
+                    <h3 class="form-title">Welcome Back!</h3>
+                    <p class="text-muted subtitle">Sign in to start chatting</p>
+                    <form id="loginForm">
+                        <div class="mb-2"> <!-- Reduced from mb-3 -->
+                            <label for="loginUsername" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="loginUsername" required>
+                            <div class="error-msg" id="loginError"></div>
+                        </div>
+                        <div class="mb-2"> <!-- Reduced from mb-3 -->
+                            <label for="loginPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="loginPassword" required>
+                            <div class="error-msg" id="loginError"></div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-auth">Login</button>
+                    </form>
+                    <div class="text-center flip-link-section">
+                        <small>No account? <span class="flip-link" onclick="flipToRegister()">Register here</span></small>
+                    </div>
+                </div>
+                <!-- Back: Register Form -->
+                <div class="flip-card-back">
+                    <i class="fas fa-user-plus icon text-primary"></i>
+                    <h3 class="form-title">Create Account</h3>
+                    <p class="text-muted subtitle">Join ApexChat today</p>
+                    <form id="registerForm">
+                        <div class="mb-2"> <!-- Reduced from mb-3 -->
+                            <label for="regUsername" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="regUsername" required>
+                            <div class="error-msg" id="regUsernameError"></div>
+                        </div>
+                        <div class="mb-2"> <!-- Reduced from mb-3 -->
+                            <label for="regEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="regEmail" required>
+                            <div class="error-msg" id="regEmailError"></div>
+                        </div>
+                        <div class="mb-2"> <!-- Reduced from mb-3 -->
+                            <label for="regPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="regPassword" required minlength="6">
+                            <div class="error-msg" id="regPasswordError"></div>
+                        </div>
+                        <div class="mb-2"> <!-- Reduced from mb-3 -->
+                            <label for="regConfirmPassword" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="regConfirmPassword" required minlength="6">
+                            <div class="error-msg" id="regConfirmError"></div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-auth">Register</button>
+                    </form>
+                    <div class="text-center flip-link-section">
+                        <small>Already have an account? <span class="flip-link" onclick="flipToLogin()">Login here</span></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_BASE = 'http://localhost:8080/api';
+        let token = localStorage.getItem('token');
+
+        // Check if already logged in
+        if (token) {
+            window.location.href = 'index.html';
+        }
+
+        // Flip Functions
+        function flipToRegister() {
+            document.getElementById('flipCard').classList.add('flipped');
+        }
+
+        function flipToLogin() {
+            document.getElementById('flipCard').classList.remove('flipped');
+        }
+
+        // Clear errors
+        function clearErrors(formId) {
+            const errors = document.querySelectorAll(`#${formId} .error-msg`);
+            errors.forEach(err => err.style.display = 'none');
+        }
+
+        // Show error
+        function showError(elementId, message) {
+            const errorEl = document.getElementById(elementId);
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+        }
+
+        // Login Form Handler
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearErrors('loginForm');
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            if (!username || !password) {
+                showError('loginError', 'Please fill in all fields.');
+                return;
+            }
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    token = data.token;
+                    localStorage.setItem('token', token);
+                    window.location.href = 'index.html'; // Redirect to home/dashboard
+                } else {
+                    const error = await response.json();
+                    showError('loginError', error.message || 'Login failed: Invalid credentials');
+                }
+            } catch (err) {
+                console.error('Login error:', err);
+                showError('loginError', 'Login failed: Server error. Please try again.');
+            }
+        });
+
+        // Register Form Handler
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearErrors('registerForm');
+            const username = document.getElementById('regUsername').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regConfirmPassword').value;
+            
+            // Client-side validation
+            if (!username || !email || !password || !confirmPassword) {
+                showError('regUsernameError', 'Please fill in all fields.');
+                return;
+            }
+            if (password.length < 6) {
+                showError('regPasswordError', 'Password must be at least 6 characters.');
+                return;
+            }
+            if (password !== confirmPassword) {
+                showError('regConfirmError', 'Passwords do not match.');
+                return;
+            }
+            if (!email.includes('@')) {
+                showError('regEmailError', 'Please enter a valid email.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password })
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    alert(data.message || 'Registration successful! Please log in with your credentials.');
+                    flipToLogin(); // Flip back to login
+                    // Optionally clear form
+                    document.getElementById('registerForm').reset();
+                } else {
+                    const error = await response.json();
+                    showError('regUsernameError', error.message || 'Registration failed: Username or email already exists.');
+                }
+            } catch (err) {
+                console.error('Register error:', err);
+                showError('regUsernameError', 'Registration failed: Server error. Please try again.');
+            }
+        });
+
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            const icon = document.querySelector('.theme-toggle i');
+            icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        // Load theme
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            document.querySelector('.theme-toggle i').className = 'fas fa-sun';
+        }
+    </script>
+</body>
+</html>

@@ -1,131 +1,306 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Chat App</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f5f5;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            height: 100vh;
-            margin: 0;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ApexChat - Microservices Chat</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+:root {
+    --primary-color: #6366f1;
+    --secondary-color: #8b5cf6;
+    --bg-color: #f8fafc;
+    --sidebar-bg: #ffffff;
+    --chat-bg: #ffffff;
+    --message-sent: #4f46e5;
+    --message-received: #e2e8f0;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --border-color: #e2e8f0;
+    --shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+}
 
-        h1 {
-            margin-top: 20px;
-            color: #333;
-        }
+[data-theme="dark"] {
+    --bg-color: #0f0f23;
+    --sidebar-bg: #1a1a2e;
+    --chat-bg: #1a1a2e;
+    --message-received: #1e293b;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --border-color: #334155;
+}
 
-        #chat-container {
-            background: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            width: 400px;
-            max-width: 90%;
-            height: 500px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+body {
+    background: var(--bg-color);
+    color: var(--text-primary);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    line-height: 1.6;
+}
 
-        #messages {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-        }
+/* Navbar */
+.navbar {
+    background: var(--primary-color);
+    padding: 1rem 0;
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+.navbar-brand { font-size: 1.5rem; font-weight: bold; color: white !important; }
+.nav-link { color: rgba(255,255,255,0.9) !important; margin:0 0.5rem; transition:0.2s; }
+.nav-link:hover { color:white !important; }
+.user-nav { display:flex; align-items:center; gap:1rem; }
+.user-avatar-nav { width:35px; height:35px; border-radius:50%; background:rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; }
 
-        .message {
-            background: #e1f5fe;
-            margin-bottom: 10px;
-            padding: 10px 15px;
-            border-radius: 20px;
-            max-width: 80%;
-        }
+/* Main Container */
+.main-container {
+    display: flex;
+    min-height: calc(100vh - 80px);
+    max-width: 1400px;
+    margin: 2rem auto;
+    gap: 2rem;
+    padding: 0 1rem;
+}
 
-        .message.user {
-            background: #c8e6c9;
-            align-self: flex-end;
-        }
+/* Sidebar */
+.sidebar {
+    width: 280px;
+    background: var(--sidebar-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    height: fit-content;
+}
+.sidebar h4 { margin-bottom:1rem; color: var(--primary-color); }
+.nav-item { display:block; padding:0.75rem 1rem; border-radius:0.5rem; margin-bottom:0.5rem; text-decoration:none; color:var(--text-secondary); transition:0.2s; }
+.nav-item:hover, .nav-item.active { background: var(--primary-color); color:white; }
+.search-input { width:100%; padding:0.75rem; border:1px solid var(--border-color); border-radius:0.5rem; background:var(--bg-color); }
 
-        #input-container {
-            display: flex;
-            border-top: 1px solid #ddd;
-        }
+/* Main Content - Chat */
+.main-content {
+    flex:1;
+    background: var(--chat-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+.chat-header {
+    background: var(--primary-color);
+    color:white;
+    padding:1.5rem;
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+}
+.chat-title { font-size:1.25rem; margin:0; }
+.chat-actions { display:flex; gap:1rem; }
+.btn-chat { background: rgba(255,255,255,0.2); border:none; color:white; padding:0.5rem; border-radius:0.5rem; transition:0.2s; }
+.btn-chat:hover { background: rgba(255,255,255,0.3); }
 
-        #message-input {
-            flex: 1;
-            border: none;
-            padding: 15px;
-            font-size: 16px;
-            border-radius: 0 0 0 10px;
-        }
+.messages-container {
+    height: 400px;
+    overflow-y: auto;
+    padding: 1.5rem;
+    background: linear-gradient(to bottom, var(--chat-bg), #f1f5f9);
+}
+.message { display:flex; margin-bottom:1rem; animation:fadeIn 0.3s ease-in; }
+.message.sent { justify-content:flex-end; }
+.message-bubble { max-width:60%; padding:0.75rem 1rem; border-radius:1rem; position:relative; }
+.message.sent .message-bubble { background: var(--message-sent); color:white; border-bottom-right-radius:0.25rem; }
+.message.received .message-bubble { background: var(--message-received); color: var(--text-primary); border-bottom-left-radius:0.25rem; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
 
-        #send-btn {
-            background: #2196f3;
-            color: white;
-            border: none;
-            padding: 15px 20px;
-            cursor: pointer;
-            font-size: 16px;
-            border-radius: 0 0 10px 0;
-            transition: background 0.3s;
-        }
+.input-area {
+    padding:1.5rem;
+    border-top:1px solid var(--border-color);
+    background: var(--chat-bg);
+    display:flex;
+    gap:1rem;
+    align-items:flex-end;
+}
+.message-input {
+    flex:1;
+    padding:0.75rem 1rem;
+    border:1px solid var(--border-color);
+    border-radius:2rem;
+    background: var(--bg-color);
+    color: var(--text-primary);
+    resize: vertical;
+    min-height:50px;
+}
+.send-btn {
+    width:50px;
+    height:50px;
+    border:none;
+    border-radius:50%;
+    background: var(--primary-color);
+    color:white;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+.send-btn:hover { background: var(--secondary-color); }
 
-        #send-btn:hover {
-            background: #1976d2;
-        }
-    </style>
+/* Footer */
+.footer { background: var(--sidebar-bg); border-top:1px solid var(--border-color); padding:2rem 0; text-align:center; color: var(--text-secondary); margin-top:2rem; }
+.footer a { color: var(--primary-color); text-decoration:none; }
+
+/* Responsive */
+@media (max-width:768px) {
+    .main-container { flex-direction: column; margin:1rem; }
+    .sidebar { width:100%; order:2; }
+    .messages-container { height:300px; }
+}
+
+/* Theme toggle */
+.theme-toggle { background:none; border:none; color:white; font-size:1.2rem; cursor:pointer; }
+</style>
 </head>
 <body>
-    <h1>Simple Chat App</h1>
-    <div id="chat-container">
-        <div id="messages"></div>
-        <div id="input-container">
-            <input type="text" id="message-input" placeholder="Type your message...">
-            <button id="send-btn">Send</button>
-        </div>
-    </div>
 
-    <script>
-        const messagesEl = document.getElementById('messages');
-        const inputEl = document.getElementById('message-input');
-        const sendBtn = document.getElementById('send-btn');
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg">
+<div class="container">
+<a class="navbar-brand" href="#"><i class="fas fa-comments"></i> Varta </a>
+<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+<span class="navbar-toggler-icon"></span>
+</button>
+<div class="collapse navbar-collapse" id="navbarNav">
+<ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="home.html">Home</a></li>
+<li class="nav-item"><a class="nav-link active" href="chat.html">Chat</a></li>
+<li class="nav-item"><a class="nav-link" href="#groups">Groups</a></li>
+<li class="nav-item"><a class="nav-link" href="profile.html">Profile</a></li>
+<li class="nav-item"><a class="nav-link" href="#analytics">Analytics</a></li>
+</ul>
+<ul class="navbar-nav user-nav">
+<li class="nav-item dropdown">
+<a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" id="userDropdown">
+<div class="user-avatar-nav" id="userAvatar">G</div> <span id="userName">Guest</span>
+</a>
+<ul class="dropdown-menu">
+<li><a class="dropdown-item" href="#settings">Settings</a></li>
+<li><a class="dropdown-item" href="login.html" onclick="login()">login</a></li>
+<li><a class="dropdown-item" href="#" onclick="logout()">Logout</a></li>
+</ul>
+</li>
+<li class="nav-item"><button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme"><i class="fas fa-moon"></i></button></li>
+</ul>
+</div>
+</div>
+</nav>
 
-        // Use WebSocket via gateway
-        const ws = new WebSocket("ws://localhost:8090/ws/"); // <-- note trailing slash
+<!-- Main Container -->
+<div class="main-container">
+<!-- Sidebar -->
+<aside class="sidebar">
+<div class="search-sidebar">
+<input type="text" class="search-input" placeholder="Search chats or users..." id="searchInput">
+</div>
+<h4>Quick Navigation</h4>
+<a href="#private-chat" class="nav-item active"><i class="fas fa-user"></i> Private Chats</a>
+<a href="#group-chat" class="nav-item"><i class="fas fa-users"></i> Groups</a>
+<a href="#media" class="nav-item"><i class="fas fa-image"></i> Media Gallery</a>
+<a href="#history" class="nav-item"><i class="fas fa-history"></i> Message History</a>
+<h4>Recent Contacts</h4>
+<div id="recentContacts">
+<a href="#john" class="nav-item" onclick="startChat('john')"><i class="fas fa-circle" style="color: #10b981;"></i> John Doe (Online)</a>
+<a href="#jane" class="nav-item" onclick="startChat('jane')"><i class="fas fa-circle" style="color: #94a3b8;"></i> Jane Smith</a>
+</div>
+</aside>
 
-        ws.onmessage = (event) => addMessage(event.data, false);
+<!-- Chat Content -->
+<main class="main-content">
+<header class="chat-header">
+<div>
+<h2 class="chat-title" id="chatTitle">Select a chat</h2>
+<p class="mb-0" style="opacity:0.9;" id="chatStatus">Welcome to ApexChat</p>
+</div>
+<div class="chat-actions">
+<button class="btn-chat"><i class="fas fa-paperclip"></i></button>
+<button class="btn-chat"><i class="fas fa-emoji"></i></button>
+<button class="btn-chat"><i class="fas fa-phone"></i></button>
+</div>
+</header>
 
-        ws.onopen = () => console.log("Connected to chat server");
+<div class="messages-container" id="messagesContainer">
+<div class="text-center text-muted mt-3">Start a conversation to see messages here.</div>
+</div>
 
-        ws.onerror = (err) => console.error("WebSocket error:", err);
+<div class="input-area">
+<textarea class="message-input" id="messageInput" placeholder="Type your message here..." rows="1"></textarea>
+<button class="send-btn" id="sendBtn">
+<i class="fas fa-paper-plane"></i>
+</button>
+</div>
+</main>
+</div>
 
-        function addMessage(text, user=false) {
-            const msgEl = document.createElement('div');
-            msgEl.className = 'message' + (user ? ' user' : '');
-            msgEl.innerText = text;
-            messagesEl.appendChild(msgEl);
-            messagesEl.scrollTop = messagesEl.scrollHeight;
-        }
+<!-- Footer -->
+<footer class="footer">
+<div class="container">
+<p>&copy; 2025 ApexChat. Built with Microservices. <a href="/README.md">Documentation</a></p>
+</div>
+</footer>
 
-        function sendMessage() {
-            const msg = inputEl.value.trim();
-            if (msg) {
-                addMessage(msg, true);
-                ws.send(msg);
-                inputEl.value = "";
-            }
-        }
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+let ws = null;
+const messagesContainer = document.getElementById('messagesContainer');
+const messageInput = document.getElementById('messageInput');
+const sendBtn = document.getElementById('sendBtn');
 
-        sendBtn.addEventListener('click', sendMessage);
-        inputEl.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') sendMessage();
-        });
-    </script>
+// Theme toggle
+function toggleTheme() {
+    if(document.body.getAttribute('data-theme')==='dark') {
+        document.body.removeAttribute('data-theme');
+        localStorage.removeItem('theme');
+        document.querySelector('.theme-toggle i').className='fas fa-moon';
+    } else {
+        document.body.setAttribute('data-theme','dark');
+        localStorage.setItem('theme','dark');
+        document.querySelector('.theme-toggle i').className='fas fa-sun';
+    }
+}
+if(localStorage.getItem('theme')==='dark'){toggleTheme();}
+
+// WebSocket connect
+function connectWebSocket(){
+    ws = new WebSocket("ws://localhost:8090/ws/");
+    ws.onopen = ()=>console.log("Connected to WebSocket server");
+    ws.onmessage = (event)=>addMessage(event.data,false);
+    ws.onerror = (err)=>console.error("WebSocket error:",err);
+}
+connectWebSocket();
+
+// Add message to UI
+function addMessage(text,user=false){
+    const msgEl = document.createElement('div');
+    msgEl.className = 'message ' + (user ? 'sent':'received');
+    const bubble = document.createElement('div');
+    bubble.className='message-bubble';
+    bubble.innerText=text;
+    msgEl.appendChild(bubble);
+    messagesContainer.appendChild(msgEl);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+// Send message
+function sendMessage(){
+    const msg = messageInput.value.trim();
+    if(!msg) return;
+    addMessage(msg,true);
+    if(ws && ws.readyState===WebSocket.OPEN) ws.send(msg);
+    messageInput.value='';
+}
+
+sendBtn.addEventListener('click',sendMessage);
+messageInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter') sendMessage(); });
+</script>
 </body>
 </html>

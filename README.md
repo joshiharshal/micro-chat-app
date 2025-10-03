@@ -102,4 +102,11 @@ curl http://media-service:8000/
 
 # Analytics service
 curl http://analytics-service:8000/metrics
-    
+
+
+curl http://localhost:8090/users/
+curl http://localhost:8090/chat/
+curl http://localhost:8090/messages/
+curl http://localhost:8090/groups/
+curl http://localhost:8090/media/
+curl http://localhost:8090/analytics/

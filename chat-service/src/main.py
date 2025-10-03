@@ -7,7 +7,7 @@ app = FastAPI()
 # Mount REST endpoints **without prefix** (matches nginx /chat/)
 app.include_router(chat_router)
 
-@app.websocket("/ws")
+@app.websocket("/ws/")
 async def websocket_route(websocket: WebSocket):
     await websocket_endpoint(websocket)
 

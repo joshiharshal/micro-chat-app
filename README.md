@@ -72,3 +72,33 @@ etc.
 Frontend: http://localhost:8090/
 
 Health check URLs (via NGINX gateway)
+
+
+
+docker compose exec gateway sh
+# Auth service
+curl http://auth-service:8000/health
+
+# User service
+curl http://user-service:8000/
+
+# Chat service
+curl http://chat-service:8000/
+
+# Message history service
+curl http://message-history-service:8000/messages
+
+# Group service
+curl http://group-service:8000/groups
+
+# Notification service
+curl http://notification-service:8000/health
+curl -X POST http://notification-service:8000/notify \
+     -H "Content-Type: application/json" \
+     -d '{"message":"Hello from gateway container"}'
+
+# Media service (if implemented)
+curl http://media-service:8000/
+
+# Analytics service
+curl http://analytics-service:8000/metrics

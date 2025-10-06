@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ApexChat - Media Gallery</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+:root {
+  --primary-color:#6366f1;
+  --secondary-color:#8b5cf6;
+  --bg-color:#f8fafc;
+  --card-bg:#ffffff;
+  --text-primary:#1e293b;
+  --text-secondary:#64748b;
+  --border-color:#e2e8f0;
+  --shadow:0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -1px rgba(0,0,0,0.06);
+}
+[data-theme="dark"] {
+  --bg-color:#0f0f23;
+  --card-bg:#1a1a2e;
+  --text-primary:#f8fafc;
+  --text-secondary:#94a3b8;
+  --border-color:#334155;
+}
+body { background: var(--bg-color); color: var(--text-primary); font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin:0; line-height:1.6; overflow:hidden; min-height:100vh; display:flex; flex-direction:column; }
+.navbar { background: var(--primary-color); padding:1rem 0; box-shadow: var(--shadow); position:sticky; top:0; z-index:1000; }
+.navbar-brand { font-size:1.5rem; font-weight:bold; color:white !important; }
+.nav-link { color: rgba(255,255,255,0.9) !important; margin:0 0.5rem; transition: color 0.2s; }
+.nav-link:hover,.nav-link.active { color:white !important; }
+.user-nav { display:flex; align-items:center; gap:1rem; }
+.user-avatar-nav { width:35px; height:35px; border-radius:50%; background:rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; }
+.main-container { flex:1; max-width:1200px; margin:2rem auto; padding:0 1rem; overflow-y:auto; }
+.media-card { background: var(--card-bg); border:1px solid var(--border-color); border-radius:0.75rem; padding:2rem; box-shadow: var(--shadow); animation:fadeIn 0.5s ease-in; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
+.upload-section { text-align:center; margin-bottom:2rem; border:2px dashed var(--border-color); border-radius:0.75rem; padding:2rem; cursor:pointer; transition:border-color 0.2s; }
+.upload-section:hover, .upload-section.dragover { border-color: var(--primary-color); background: rgba(99,102,241,0.05);}
+.upload-btn { background: var(--primary-color); color:white; border:none; padding:1rem 2rem; border-radius:0.5rem; cursor:pointer; transition:background 0.2s; font-size:1rem; display:inline-flex; align-items:center; gap:0.5rem; }
+.upload-btn:hover { background: var(--secondary-color); }
+.file-input { display:none; }
+.upload-preview { display:flex; flex-wrap:wrap; gap:1rem; justify-content:center; margin-top:1rem; }
+.preview-thumb { width:100px; height:100px; object-fit:cover; border-radius:0.5rem; border:2px solid var(--border-color); }
+.gallery-grid { display:grid; grid-template-columns: repeat(auto-fill,minmax(250px,1fr)); gap:1.5rem; margin-top:1rem; }
+.media-item { background: var(--bg-color); border-radius:0.75rem; overflow:hidden; box-shadow: var(--shadow); transition: transform 0.2s, box-shadow 0.2s; position:relative; }
+.media-item:hover { transform:translateY(-5px); box-shadow:0 8px 25px rgba(0,0,0,0.15);}
+.media-thumb { width:100%; height:200px; object-fit:cover; cursor:pointer;}
+.media-info { padding:1rem; }
+.media-filename { font-weight:bold; margin-bottom:0.5rem; color:var(--text-primary); word-break:break-word;}
+.media-date { font-size:0.875rem; color:var(--text-secondary); margin-bottom:1rem;}
+.btn-delete-media { position:absolute; top:0.5rem; right:0.5rem; background: rgba(239,68,68,0.8); color:white; border:none; width:30px; height:30px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity 0.2s; z-index:10; }
+.media-item:hover .btn-delete-media { opacity:1; }
+.no-media { text-align:center; color:var(--text-secondary); font-style:italic; padding:3rem; }
+.no-media i { font-size:3rem; margin-bottom:1rem; }
+.footer { background: var(--card-bg); border-top:1px solid var(--border-color); padding:1rem 0; text-align:center; color: var(--text-secondary); margin-top:auto; }
+.footer a { color: var(--primary-color); text-decoration:none; }
+.theme-toggle { background:none; border:none; color:white; font-size:1.2rem; cursor:pointer; }
+@media(max-width:768px){.main-container{padding:0 0.5rem; margin:1rem auto;}.gallery-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:1rem;}.upload-section{padding:1rem;}}
+</style>
+</head>
+<body data-theme="light">
+<nav class="navbar navbar-expand-lg">
+<div class="container">
+<a class="navbar-brand" href="index.html"><i class="fas fa-comments"></i> ApexChat</a>
+<ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+<li class="nav-item"><a class="nav-link" href="chat.html">Private Chat</a></li>
+<li class="nav-item"><a class="nav-link" href="groups.html">Groups</a></li>
+<li class="nav-item"><a class="nav-link" href="profile.html">Profile</a></li>
+<li class="nav-item"><a class="nav-link active" href="media.html">Media Gallery</a></li>
+<li class="nav-item"><a class="nav-link" href="analytics.html">Analytics</a></li>
+</ul>
+<ul class="navbar-nav user-nav">
+<li class="nav-item"><a class="nav-link" href="#notifications"><i class="fas fa-bell"></i></a></li>
+<li class="nav-item dropdown">
+<a class="nav-link" href="#" role="button" data-bs-toggle="dropdown">
+<div class="user-avatar-nav">G</div> <span>Guest</span>
+</a>
+<ul class="dropdown-menu">
+<li><a class="dropdown-item" href="login.html">Login</a></li>
+<li><a class="dropdown-item" href="login.html">Register</a></li>
+</ul>
+</li>
+<li class="nav-item"><button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme"><i class="fas fa-moon"></i></button></li>
+</ul>
+</div>
+</nav>
+
+<div class="main-container">
+<div class="media-card">
+<h2 style="text-align:center; margin-bottom:2rem; color: var(--text-primary);"><i class="fas fa-images"></i> Your Media Gallery</h2>
+
+<div class="upload-section" id="uploadSection" onclick="document.getElementById('fileInput').click()">
+<label for="fileInput" class="upload-btn"><i class="fas fa-upload"></i> Upload Photo</label>
+<p style="margin-top:1rem; color: var(--text-secondary);">Supports JPG, PNG, GIF • Max 5MB per file</p>
+<input type="file" id="fileInput" class="file-input" accept="image/*" multiple>
+<div class="upload-preview" id="uploadPreview"></div>
+</div>
+
+<div class="gallery-grid" id="galleryGrid"></div>
+<div class="no-media" id="noMedia" style="display:none;"><i class="fas fa-photo-video"></i><p>No media uploaded yet.</p></div>
+</div>
+</div>
+
+<footer class="footer">
+<div class="container">
+<p>&copy; 2023 ApexChat. Media Gallery • <a href="index.html">Back to Dashboard</a></p>
+</div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const STORAGE_KEY='mediaGallery';
+let gallery = JSON.parse(localStorage.getItem(STORAGE_KEY))||[];
+
+function toggleTheme(){document.body.dataset.theme=document.body.dataset.theme==='dark'?'light':'dark';}
+
+function renderGallery(){
+  const grid = document.getElementById('galleryGrid');
+  const noMedia = document.getElementById('noMedia');
+  grid.innerHTML='';
+  if(!gallery.length){noMedia.style.display='block'; return;}
+  noMedia.style.display='none';
+  gallery.forEach(item=>{
+    const div=document.createElement('div');
+    div.className='media-item';
+    div.innerHTML=`<img src="${item.url}" class="media-thumb"><div class="media-info"><div class="media-filename">${item.filename}</div><div class="media-date">${item.uploadedAt}</div></div>
+    <button class="btn-delete-media" onclick="deleteMedia('${item.id}')"><i class="fas fa-trash-alt"></i></button>`;
+    grid.appendChild(div);
+  });
+}
+
+function deleteMedia(id){
+  gallery = gallery.filter(item=>item.id!==id);
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(gallery));
+  renderGallery();
+}
+
+document.getElementById('fileInput').addEventListener('change',function(e){
+  const files=Array.from(e.target.files);
+  files.forEach(file=>{
+    const reader=new FileReader();
+    reader.onload=function(evt){
+      gallery.push({id:Date.now()+Math.random(), url:evt.target.result, filename:file.name, uploadedAt:new Date().toLocaleDateString()});
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(gallery));
+      renderGallery();
+    };
+    reader.readAsDataURL(file);
+  });
+});
+
+renderGallery();
+</script>
+</body>
+</html>

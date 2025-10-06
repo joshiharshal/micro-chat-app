@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ApexChat - Dashboard</title>
+<title>VartaChat - Dashboard</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <style>
@@ -50,7 +50,7 @@ body {background:var(--bg-color); color:var(--text-primary); font-family:'Segoe 
 
 <nav class="navbar navbar-expand-lg">
 <div class="container">
-<a class="navbar-brand" href="index.html"><i class="fas fa-comments"></i> ApexChat Dashboard</a>
+<a class="navbar-brand" href="index.html"><i class="fas fa-comments"></i> VartaChat Dashboard</a>
 <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
 <li class="nav-item"><a class="nav-link" href="chat.html">Chat</a></li>
@@ -59,15 +59,25 @@ body {background:var(--bg-color); color:var(--text-primary); font-family:'Segoe 
 <li class="nav-item"><a class="nav-link" href="analytics.html">Analytics</a></li>
 </ul>
 <ul class="navbar-nav user-nav">
-<li class="nav-item"><div class="user-avatar-nav" id="userAvatar">A</div> <span id="userName">Guest</span></li>
+<li class="nav-item dropdown">
+<a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" id="userDropdown">
+<div class="user-avatar-nav" id="userAvatar">G</div> <span id="userName">Guest</span>
+</a>
+<ul class="dropdown-menu">
+<li><a class="dropdown-item" href="#settings">Settings</a></li>
+<li><a class="dropdown-item" href="login.html" onclick="login()">login</a></li>
+<li><a class="dropdown-item" href="#" onclick="logout()">Logout</a></li>
+</ul>
+</li>
 <li class="nav-item"><button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme"><i class="fas fa-moon"></i></button></li>
 </ul>
+</div>
 </div>
 </nav>
 
 <div class="main-container">
 <div class="dashboard-card">
-<h1>Welcome to ApexChat!</h1>
+<h1>Welcome to VartaChat!</h1>
 <p class="lead">Your microservices-powered chat platform. Choose a section to get started.</p>
 <div>
 <a href="chat.html" class="quick-link"><i class="fas fa-user"></i> Private Chats</a>
@@ -77,7 +87,7 @@ body {background:var(--bg-color); color:var(--text-primary); font-family:'Segoe 
 <a href="profile.html" class="quick-link"><i class="fas fa-user-circle"></i> Profile</a>
 </div>
 <div class="mt-4">
-<h4>Quick Stats</h4>
+<!-- <h4>Quick Stats</h4> -->
 <div id="analyticsStats" class="row text-start"></div>
 </div>
 </div>
@@ -85,7 +95,7 @@ body {background:var(--bg-color); color:var(--text-primary); font-family:'Segoe 
 
 <footer class="footer">
 <div class="container">
-<p>&copy; 2023 ApexChat. Built with Microservices. <a href="login.html">Login</a> | <a href="README.md">Docs</a></p>
+<p>&copy; 2023 VartaChat. Built with Microservices. <a href="login.html">Login</a> | <a href="README.md">Docs</a></p>
 </div>
 </footer>
 
@@ -139,20 +149,20 @@ async function loadAnalytics(){
     } catch(err){ console.error(err); loadAnalyticsDemo(); }
 }
 
-// Demo stats if API fails
-function loadAnalyticsDemo(){
-    const demoStats = { totalMessages: 120, groups: 5, media: 34, notifications: 2 };
-    renderStats(demoStats);
-}
+// // Demo stats if API fails
+// function loadAnalyticsDemo(){
+//     const demoStats = { totalMessages: 120, groups: 5, media: 34, notifications: 2 };
+//     renderStats(demoStats);
+// }
 
-function renderStats(stats){
-    document.getElementById('analyticsStats').innerHTML = `
-        <div class="col-md-3"><i class="fas fa-comment fa-2x"></i><br>${stats.totalMessages} Messages</div>
-        <div class="col-md-3"><i class="fas fa-users fa-2x"></i><br>${stats.groups} Groups</div>
-        <div class="col-md-3"><i class="fas fa-image fa-2x"></i><br>${stats.media} Media</div>
-        <div class="col-md-3"><i class="fas fa-bell fa-2x"></i><br>${stats.notifications} Alerts</div>
-    `;
-}
+// function renderStats(stats){
+//     document.getElementById('analyticsStats').innerHTML = `
+//         <div class="col-md-3"><i class="fas fa-comment fa-2x"></i><br>${stats.totalMessages} Messages</div>
+//         <div class="col-md-3"><i class="fas fa-users fa-2x"></i><br>${stats.groups} Groups</div>
+//         <div class="col-md-3"><i class="fas fa-image fa-2x"></i><br>${stats.media} Media</div>
+//         <div class="col-md-3"><i class="fas fa-bell fa-2x"></i><br>${stats.notifications} Alerts</div>
+//     `;
+// }
 
 function toggleTheme(){
     const body = document.body;

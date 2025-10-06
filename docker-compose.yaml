@@ -39,7 +39,7 @@ services:
   media-service:
     build: ./media-service
     expose:
-      - "8000"
+      - "8007"
 
   analytics-service:
     build: ./analytics-service

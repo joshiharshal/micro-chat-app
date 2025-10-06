@@ -1,14 +1,15 @@
 from fastapi import FastAPI
-from notifier import send_notification
 
 app = FastAPI()
+
+def send_notification(message: str):
+    print(f"Notification: {message}")
 
 @app.post("/notify/")
 def notify(msg: dict):
     send_notification(msg.get("message", ""))
     return {"status": "sent"}
 
-# Health check endpoint
 @app.get("/health")
 def health():
     return {"status": "ok"}

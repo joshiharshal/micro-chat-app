@@ -104,9 +104,9 @@ curl http://media-service:8000/
 curl http://analytics-service:8000/metrics
 
 
-curl http://localhost:8090/users/
-curl http://localhost:8090/chat/
-curl http://localhost:8090/messages/
-curl http://localhost:8090/groups/
-curl http://localhost:8090/media/
-curl http://localhost:8090/analytics/
+curl http://localhost:8090/users/health
+curl http://localhost:8090/chat/health
+curl http://localhost:8090/messages/health
+curl http://localhost:8090/groups/health
+curl http://localhost:8090/media/health
+curl http://localhost:8090/analytics/health

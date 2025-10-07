@@ -1,209 +1,475 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VartaChat - Group Chats</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-<style>
-:root {
-    --primary-color: #6366f1;
-    --secondary-color: #8b5cf6;
-    --bg-color: #f8fafc;
-    --chat-bg: #ffffff;
-    --message-sent: #4f46e5;
-    --message-received: #e2e8f0;
-    --text-primary: #1e293b;
-    --text-secondary: #64748b;
-    --border-color: #e2e8f0;
-    --shadow: 0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -1px rgba(0,0,0,0.06);
-}
-[data-theme="dark"] {
-    --bg-color: #0f0f23;
-    --chat-bg: #1a1a2e;
-    --message-received: #1e293b;
-    --text-primary: #f8fafc;
-    --text-secondary: #94a3b8;
-    --border-color: #334155;
-}
-body {
-    background: var(--bg-color);
-    color: var(--text-primary);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    line-height: 1.6;
-    overflow: hidden;
-}
-.navbar { background: var(--primary-color); padding:1rem 0; box-shadow: var(--shadow); position: sticky; top:0; z-index:1000; }
-.navbar-brand { font-size:1.5rem; font-weight:bold; color:white !important; }
-.nav-link { color: rgba(255,255,255,0.9) !important; margin:0 0.5rem; transition: color 0.2s; }
-.nav-link:hover, .nav-link.active { color:white !important; }
-.user-nav { display:flex; align-items:center; gap:1rem; }
-.user-avatar-nav { width:35px; height:35px; border-radius:50%; background:rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ApexChat - Groups</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <style>
+    :root{
+      --primary-color:#6366f1;
+      --secondary-color:#8b5cf6;
+      --bg-color:#f8fafc;
+      --sidebar-bg:#ffffff;
+      --chat-bg:#f1f5f9;
+      --message-bubble:#ffffff;
+      --text-primary:#1e293b;
+      --text-secondary:#64748b;
+      --border-color:#e2e8f0;
+      --shadow:0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -1px rgba(0,0,0,0.06);
+      --group-avatar-bg:#10b981;
+      --sent-bg:#e0e7ff;
+    }
+    [data-theme="dark"]{
+      --bg-color:#0f0f23;
+      --sidebar-bg:#1a1a2e;
+      --chat-bg:#1e293b;
+      --message-bubble:#334155;
+      --text-primary:#f8fafc;
+      --text-secondary:#94a3b8;
+      --border-color:#334155;
+      --group-avatar-bg:#34d399;
+      --sent-bg:#4f46e5;
+    }
 
-.main-container { max-width:1200px; margin:0 auto; padding:0 1rem; display:flex; flex-direction:column; height:calc(100vh - 80px);}
-.main-content { flex:1; background: var(--chat-bg); border:1px solid var(--border-color); border-radius:0.75rem; overflow:hidden; box-shadow:var(--shadow); display:flex; flex-direction:column;}
-.chat-header { background: var(--primary-color); color:white; padding:1rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; }
-.chat-title-section { display:flex; align-items:center; gap:1rem; flex:1; }
-.chat-avatar { width:40px; height:40px; border-radius:50%; background: rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; }
-.chat-title { font-size:1.25rem; margin:0; }
-.chat-subtitle { font-size:0.875rem; opacity:0.9; margin:0; }
-.group-selector { background: rgba(255,255,255,0.2); border:none; color:white; padding:0.5rem; border-radius:0.5rem; min-width:150px; }
-.chat-actions { display:flex; gap:0.5rem; }
-.btn-chat { background: rgba(255,255,255,0.2); border:none; color:white; padding:0.5rem; border-radius:0.5rem; cursor:pointer; width:40px; height:40px; display:flex; align-items:center; justify-content:center; transition:background 0.2s;}
-.btn-chat:hover { background: rgba(255,255,255,0.3);}
-.messages-container { flex:1; overflow-y:auto; padding:1.5rem; background:linear-gradient(to bottom,var(--chat-bg),#f1f5f9);}
-.no-messages { display:flex; justify-content:center; align-items:center; height:100%; color:var(--text-secondary); font-style:italic; }
-.message { display:flex; margin-bottom:1rem; animation:fadeIn 0.3s ease-in; }
-@keyframes fadeIn { from {opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
-.message.sent { justify-content:flex-end;}
-.message-bubble { max-width:70%; padding:0.75rem 1rem; border-radius:1rem; position:relative;}
-.message.sent .message-bubble { background:var(--message-sent); color:white; border-bottom-right-radius:0.25rem;}
-.message.received .message-bubble { background:var(--message-received); color:var(--text-primary); border-bottom-left-radius:0.25rem;}
-.message-sender { font-weight:bold; margin-bottom:0.25rem; font-size:0.9rem;}
-.message-time { font-size:0.75rem; color:var(--text-secondary); margin-top:0.25rem; text-align:right; }
-.input-area { padding:1rem; border-top:1px solid var(--border-color); background:var(--chat-bg); display:flex; gap:1rem; align-items:flex-end; }
-.message-input { flex:1; padding:0.75rem 1rem; border:1px solid var(--border-color); border-radius:2rem; background:var(--bg-color); color:var(--text-primary); resize:none; min-height:50px; max-height:150px;}
-.send-btn { width:50px; height:50px; border:none; border-radius:50%; background:var(--primary-color); color:white; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.2s;}
-.send-btn:hover:not(:disabled) { background:var(--secondary-color);}
-.send-btn:disabled { background:var(--text-secondary); cursor:not-allowed;}
+    html,body{height:100%}
+    body{
+      background:var(--bg-color);
+      color:var(--text-primary);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin:0;
+      display:flex;
+      flex-direction:column;
+      height:100vh;
+      overflow:hidden;
+    }
 
-.footer { background: var(--chat-bg); border-top:1px solid var(--border-color); padding:1rem 0; text-align:center; color:var(--text-secondary);}
-.footer a { color: var(--primary-color); text-decoration:none;}
+    /* NAVBAR */
+    .navbar{
+      background:var(--primary-color);
+      padding:.5rem 1rem;
+      box-shadow:var(--shadow);
+      z-index:1000;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+    .navbar-brand{font-size:1.15rem;font-weight:600;color:#fff;text-decoration:none}
+    .user-nav{display:flex;align-items:center;gap:1rem}
+    .user-avatar-nav{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600}
+    .hamburger{color:#fff;font-size:1.4rem;cursor:pointer;display:none}
 
-@media (max-width:768px){ .main-container{padding:0 0.5rem;height:calc(100vh-100px);} .chat-header{padding:0.75rem; flex-direction:column; align-items:flex-start;} .messages-container{padding:1rem;} .input-area{padding:0.75rem;} }
+    /* LAYOUT */
+    .main-container{flex:1;display:flex;overflow:hidden}
+    .sidebar{
+      width:36%;
+      max-width:420px;
+      background:var(--sidebar-bg);
+      border-right:1px solid var(--border-color);
+      display:flex;flex-direction:column;transition:transform .25s ease;
+      z-index:1001;
+    }
+    .sidebar.mobile-hidden{transform:translateX(-100%)}
+    .sidebar-header{padding:1rem;border-bottom:1px solid var(--border-color);display:flex;justify-content:space-between;align-items:center}
+    .search-bar{width:calc(100% - 2rem);margin:0 1rem 1rem 1rem;padding:.65rem;border:1px solid var(--border-color);border-radius:.5rem;background:var(--bg-color)}
+    .group-list{list-style:none;padding:0;margin:0;overflow:auto;flex:1}
+    .group-item{display:flex;align-items:center;padding:1rem;border-bottom:1px solid var(--border-color);cursor:pointer;transition:background .15s}
+    .group-item:hover,.group-item.active{background:var(--bg-color)}
+    .group-avatar{width:50px;height:50px;border-radius:50%;background:var(--group-avatar-bg);color:#fff;display:flex;align-items:center;justify-content:center;margin-right:1rem;font-weight:700;flex-shrink:0}
+    .group-details{flex:1;min-width:0}
+    .group-name{font-weight:700;margin-bottom:.25rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .group-preview{color:var(--text-secondary);font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .member-badge{background:var(--secondary-color);color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.75rem;margin-left:.5rem;flex-shrink:0}
 
-.theme-toggle { background:none; border:none; color:white; font-size:1.2rem; cursor:pointer; }
-.loading { display:inline-block; width:20px; height:20px; border:3px solid rgba(255,255,255,.3); border-radius:50%; border-top-color:#fff; animation:spin 1s ease-in-out infinite; }
-@keyframes spin { to{ transform:rotate(360deg);} }
-</style>
+    /* CHAT AREA */
+    .chat-area{flex:1;display:flex;flex-direction:column;background:var(--chat-bg);position:relative}
+    .chat-header{padding:1rem;background:var(--sidebar-bg);border-bottom:1px solid var(--border-color);display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:10}
+    .back-btn{display:none;color:var(--text-secondary);cursor:pointer;font-size:1.25rem}
+    .chat-avatar{width:44px;height:44px;border-radius:50%;background:var(--group-avatar-bg);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+    .chat-title-section{flex:1;min-width:0}
+    .chat-title{font-weight:700;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .chat-subtitle{font-size:.875rem;color:var(--text-secondary);margin:0}
+    .chat-actions{display:flex;gap:.5rem}
+
+    .messages-container{flex:1;overflow:auto;padding:1rem;display:flex;flex-direction:column;gap:.5rem}
+    .no-group-selected{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text-secondary);font-style:italic;padding:2rem}
+    .no-group-selected i{font-size:4rem;margin-bottom:1rem;color:var(--text-secondary)}
+
+    /* Message items */
+    .message{max-width:80%;display:flex;flex-direction:column;animation:fadeIn .25s}
+    .message.sent{align-self:flex-end;text-align:right}
+    .message.received{align-self:flex-start;text-align:left}
+    .sender-name{font-weight:700;color:var(--primary-color);font-size:.85rem;margin-bottom:.25rem}
+    .message-bubble{padding:.65rem 1rem;border-radius:12px;background:var(--message-bubble);box-shadow:0 1px 0 rgba(0,0,0,0.02)}
+    .message.sent .message-bubble{background:var(--sent-bg);color:var(--text-primary);border-bottom-right-radius:6px}
+    .message.received .message-bubble{background:var(--message-bubble);border-bottom-left-radius:6px}
+    .message-time{font-size:.75rem;color:var(--text-secondary);margin-top:.25rem}
+
+    .input-area{padding:1rem;border-top:1px solid var(--border-color);background:var(--sidebar-bg);display:flex;gap:1rem;align-items:flex-end}
+    .message-input{flex:1;padding:.75rem 1rem;border:1px solid var(--border-color);border-radius:2rem;background:var(--bg-color);resize:none;min-height:48px}
+    .send-btn{width:46px;height:46px;border-radius:50%;border:none;background:var(--primary-color);color:#fff;display:flex;align-items:center;justify-content:center}
+
+    /* overlay */
+    .sidebar-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.45);z-index:1000;display:none}
+    .sidebar-overlay.active{display:block}
+
+    @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+    /* Mobile */
+    @media(max-width:768px){
+      .hamburger{display:block}
+      .sidebar{position:fixed;height:100vh;width:80%;max-width:360px;transform:translateX(-100%);z-index:1002}
+      .sidebar.mobile-open{transform:translateX(0)}
+      .back-btn{display:block}
+      .navbar-brand{display:none}
+      .chat-area{width:100%}
+    }
+  </style>
 </head>
 <body data-theme="light">
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="d-flex align-items-center">
+      <i class="fas fa-bars hamburger me-2" id="hamburgerBtn" role="button" aria-label="Toggle sidebar"></i>
+      <a class="navbar-brand" href="#"><i class="fas fa-users"></i>&nbsp;ApexChat Groups</a>
+    </div>
 
-<nav class="navbar navbar-expand-lg">
-<div class="container">
-<a class="navbar-brand" href="#"><i class="fas fa-comments"></i>Varta</a>
-<ul class="navbar-nav me-auto">
-<li class="nav-item"><a class="nav-link" href="home.html">Home</a></li>
-<li class="nav-item"><a class="nav-link" href="chat.html">Chat</a></li>
-<li class="nav-item"><a class="nav-link active" href="group.html">Groups</a></li>
-<li class="nav-item"><a class="nav-link" href="profile.html">Profile</a></li>
-<li class="nav-item"><a class="nav-link" href="#">Analytics</a></li>
+    <div class="user-nav align-items-center">
+      <a class="nav-link text-white" href="#notifications" title="Notifications"><i class="fas fa-bell"></i></a>
 
+      <div class="dropdown">
+        <a class="d-flex align-items-center text-white text-decoration-none" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          <div class="user-avatar-nav me-2" id="userAvatar">Y</div>
+          <span id="userName">You</span>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+          <li><a class="dropdown-item" href="profile.html">Profile</a></li>
+          <li><a class="dropdown-item" href="#" id="logoutBtn">Logout</a></li>
+        </ul>
+      </div>
 
-</ul>
-<ul class="navbar-nav user-nav">
-<ul class="navbar-nav user-nav">
-<li class="nav-item dropdown">
-<a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" id="userDropdown">
-<div class="user-avatar-nav" id="userAvatar">G</div> <span id="userName">Guest</span>
-</a>
-<ul class="dropdown-menu">
-<li><a class="dropdown-item" href="#settings">Settings</a></li>
-<li><a class="dropdown-item" href="login.html" onclick="login()">login</a></li>
-<li><a class="dropdown-item" href="#" onclick="logout()">Logout</a></li>
-</ul>
-</li>
-<li class="nav-item"><button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme"><i class="fas fa-moon"></i></button></li>
-</ul>
-</div>
-</div>
-</nav>
+      <button class="btn btn-sm btn-outline-light ms-2" id="themeToggleBtn" title="Toggle theme"><i class="fas fa-moon"></i></button>
+    </div>
+  </nav>
 
-<div class="main-container">
-<main class="main-content">
-<header class="chat-header">
-<div class="chat-title-section">
-<div class="chat-avatar" id="groupAvatar">G</div>
-<div>
-<h2 class="chat-title" id="groupTitle">General Group</h2>
-<p class="chat-subtitle" id="groupStatus">5 members • Active</p>
-</div>
-<select class="group-selector" id="groupSelector" onchange="switchGroup(this.value)">
-<option value="">Select Group</option>
-<option value="General">General</option>
-<option value="Team">Team</option>
-<option value="Random">Random</option>
-</select>
-</div>
-<div class="chat-actions">
-<button class="btn-chat" onclick="createGroup()" title="New Group"><i class="fas fa-plus"></i></button>
-<button class="btn-chat" onclick="viewMembers()" title="Members"><i class="fas fa-users"></i></button>
-<button class="btn-chat" onclick="leaveGroup()" title="Leave"><i class="fas fa-sign-out-alt"></i></button>
-</div>
-</header>
+  <!-- Main -->
+  <div class="main-container">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h5 class="mb-0">Groups</h5>
+        <i class="fas fa-plus" id="createGroupBtn" role="button" title="New group" style="color:var(--primary-color);cursor:pointer"></i>
+      </div>
 
-<div class="messages-container" id="messagesContainer">
-<div class="no-messages">Select a group to chat...</div>
-</div>
-<div class="input-area">
-<textarea class="message-input" id="messageInput" placeholder="Type your group message..." oninput="toggleSendBtn()"></textarea>
-<button class="send-btn" id="sendBtn" onclick="sendGroupMessage()" disabled><i class="fas fa-paper-plane"></i></button>
-</div>
-</main>
-</div>
+      <input id="searchBar" class="search-bar" placeholder="Search groups..." aria-label="Search groups" />
 
-<footer class="footer">
-<div class="container">
-<p>&copy; 2025 Varta • <a href="#">Back to Dashboard</a></p>
-</div>
-</footer>
+      <ul class="group-list" id="groupList" aria-live="polite"></ul>
+    </aside>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-let currentUser = { username: 'Guest' };
-let currentGroup = 'General';
+    <!-- Chat / Group area -->
+    <section class="chat-area" id="chatArea">
+      <header class="chat-header">
+        <i class="fas fa-arrow-left back-btn" id="backBtn" role="button" aria-label="Back"></i>
+        <div class="chat-avatar" id="chatAvatar">G</div>
+        <div class="chat-title-section">
+          <h4 id="chatTitle" class="mb-0 chat-title">Select a Group</h4>
+          <p id="chatSubtitle" class="chat-subtitle">Choose a group on the left to view messages</p>
+        </div>
 
-function toggleSendBtn() {
-    const input = document.getElementById('messageInput');
-    const btn = document.getElementById('sendBtn');
-    btn.disabled = !input.value.trim();
-}
+        <div class="chat-actions">
+          <button class="btn btn-sm btn-light btn-chat" title="Group Info" id="groupInfoBtn"><i class="fas fa-info-circle"></i></button>
+          <button class="btn btn-sm btn-light btn-chat" title="Add member" id="addMemberBtn"><i class="fas fa-user-plus"></i></button>
+        </div>
+      </header>
 
-function sendGroupMessage() {
-    const input = document.getElementById('messageInput');
-    const text = input.value.trim();
-    if(!text) return;
-    addMessage(currentUser.username, text, 'sent');
-    input.value = '';
-    toggleSendBtn();
-    // simulate reply
-    setTimeout(() => addMessage('Alice', 'Reply: '+text, 'received'), 1000);
-}
+      <div class="messages-container" id="messagesContainer">
+        <div class="no-group-selected">
+          <i class="fas fa-users"></i>
+          <p class="mt-3">No group selected — pick one to start viewing the conversation.</p>
+        </div>
+      </div>
 
-function addMessage(sender, text, type){
-    const container = document.getElementById('messagesContainer');
-    if(container.querySelector('.no-messages')) container.innerHTML='';
-    const msgDiv = document.createElement('div');
-    msgDiv.className = 'message '+type;
-    msgDiv.innerHTML = `<div class="message-bubble">
-        <div class="message-sender">${sender}</div>
-        <div>${text}</div>
-        <div class="message-time">${new Date().toLocaleTimeString()}</div>
-    </div>`;
-    container.appendChild(msgDiv);
-    container.scrollTop = container.scrollHeight;
-}
+      <div class="input-area">
+        <textarea id="messageInput" class="message-input" placeholder="Write a message to the group..." rows="1"></textarea>
+        <button id="sendBtn" class="send-btn" title="Send"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </section>
+  </div>
 
-function switchGroup(group){
-    if(!group) return;
-    currentGroup = group;
-    document.getElementById('groupTitle').textContent = group;
-    document.getElementById('messagesContainer').innerHTML = '<div class="no-messages">Start chatting in '+group+'...</div>';
-}
+  <!-- Overlay for mobile -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-function toggleTheme(){
-    const body = document.body;
-    body.dataset.theme = body.dataset.theme==='dark'?'light':'dark';
-}
+  <!-- Create Group Modal -->
+  <div class="modal fade" id="createGroupModal" tabindex="-1" aria-labelledby="createGroupModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <form id="createGroupForm" class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createGroupModalLabel">Create new group</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="newGroupName" class="form-label">Group name</label>
+            <input id="newGroupName" class="form-control" required maxlength="60" placeholder="e.g. DevOps Squad" />
+          </div>
+          <div class="mb-3">
+            <label for="newGroupMembers" class="form-label">Members (comma separated)</label>
+            <input id="newGroupMembers" class="form-control" placeholder="Alice, Bob, Charlie" />
+            <div class="form-text">You can add members now; they can be updated later.</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Group</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-function createGroup(){ alert('Feature demo only: create group.'); }
-function viewMembers(){ alert('Feature demo only: view members.'); }
-function leaveGroup(){ alert('Feature demo only: leave group.'); }
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-addMessage('Alice','Welcome to General group!','received');
-addMessage('Bob','Hi everyone!','received');
-</script>
+  <script>
+    /* -----------------------------
+       Simple front-end-only groups demo
+       ----------------------------- */
+
+    const userName = (document.getElementById('userName').innerText || 'You').trim();
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const backBtn = document.getElementById('backBtn');
+    const groupListEl = document.getElementById('groupList');
+    const messagesContainer = document.getElementById('messagesContainer');
+    const chatTitle = document.getElementById('chatTitle');
+    const chatSubtitle = document.getElementById('chatSubtitle');
+    const chatAvatar = document.getElementById('chatAvatar');
+    const searchBar = document.getElementById('searchBar');
+    const messageInput = document.getElementById('messageInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const createGroupBtn = document.getElementById('createGroupBtn');
+    const createGroupModal = new bootstrap.Modal(document.getElementById('createGroupModal'));
+    const createGroupForm = document.getElementById('createGroupForm');
+
+    // Sample groups (front-end only)
+    let groups = [
+      {
+        id: cryptoRandomId(),
+        name: "DevOps Squad",
+        members: ["Harshal", "Aditi", "Rohan", "Sana"],
+        messages: [
+          { sender: "Aditi", text: "Morning team — deployment at 11:00.", ts: Date.now() - 1000*60*60 },
+          { sender: "You", text: "Got it! I'll monitor the rollout.", ts: Date.now() - 1000*60*40 },
+        ]
+      },
+      {
+        id: cryptoRandomId(),
+        name: "Frontend Masters",
+        members: ["Riya", "Jay", "Ankit"],
+        messages: [
+          { sender: "Jay", text: "Pushed the CSS fixes.", ts: Date.now() - 1000*60*60*4 },
+          { sender: "Riya", text: "Looks good on mobile.", ts: Date.now() - 1000*60*60*3.5 }
+        ]
+      },
+      {
+        id: cryptoRandomId(),
+        name: "Random",
+        members: ["Sana", "Harshal"],
+        messages: [
+          { sender: "Sana", text: "Movie night tomorrow?", ts: Date.now() - 1000*60*60*24 }
+        ]
+      }
+    ];
+
+    let activeGroupId = null;
+
+    /* -------------------------
+       Utilities
+       ------------------------- */
+    function cryptoRandomId(){ return 'g_' + Math.random().toString(36).slice(2,10); }
+    function formatTime(ts){
+      const d = new Date(ts);
+      return d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    }
+    function safeInitials(name){
+      if(!name) return '?';
+      return name.split(' ').map(p => p[0]?.toUpperCase()).slice(0,2).join('');
+    }
+
+    /* -------------------------
+       Render functions
+       ------------------------- */
+    function renderGroupList(filter = ''){
+      groupListEl.innerHTML = '';
+      const query = filter.trim().toLowerCase();
+      const filtered = groups.filter(g=>{
+        if(!query) return true;
+        return g.name.toLowerCase().includes(query) || g.members.join(' ').toLowerCase().includes(query);
+      });
+      if(filtered.length === 0){
+        groupListEl.innerHTML = '<li class="p-3 text-muted">No groups found.</li>';
+        return;
+      }
+      filtered.forEach(g=>{
+        const lastMsg = g.messages[g.messages.length-1];
+        const preview = lastMsg ? (lastMsg.sender + ': ' + (lastMsg.text.length>40 ? lastMsg.text.slice(0,40)+'…' : lastMsg.text)) : 'No messages yet';
+        const li = document.createElement('li');
+        li.className = 'group-item' + (g.id === activeGroupId ? ' active' : '');
+        li.innerHTML = `
+          <div class="group-avatar">${safeInitials(g.name)}</div>
+          <div class="group-details">
+            <div class="d-flex align-items-center">
+              <div class="group-name">${escapeHtml(g.name)}</div>
+              <div class="member-badge ms-2" title="${g.members.length} members">${g.members.length}</div>
+            </div>
+            <div class="group-preview">${escapeHtml(preview)}</div>
+          </div>
+        `;
+        li.onclick = ()=> selectGroup(g.id);
+        groupListEl.appendChild(li);
+      });
+    }
+
+    function renderMessages(){
+      messagesContainer.innerHTML = '';
+      const g = groups.find(x=>x.id===activeGroupId);
+      if(!g){
+        messagesContainer.innerHTML = `<div class="no-group-selected"><i class="fas fa-users"></i><p class="mt-3">No group selected — pick one to start viewing the conversation.</p></div>`;
+        return;
+      }
+      g.messages.forEach(msg => {
+        const isYou = String(msg.sender).toLowerCase() === String(userName).toLowerCase() || msg.sender === 'You';
+        const item = document.createElement('div');
+        item.className = 'message ' + (isYou ? 'sent' : 'received');
+        item.innerHTML = `
+          ${!isYou ? `<div class="sender-name">${escapeHtml(msg.sender)}</div>` : ''}
+          <div class="message-bubble">${escapeHtml(msg.text)}</div>
+          <div class="message-time">${formatTime(msg.ts)}</div>
+        `;
+        messagesContainer.appendChild(item);
+      });
+      // scroll to bottom
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    function selectGroup(id){
+      activeGroupId = id;
+      const g = groups.find(x=>x.id===id);
+      if(!g) return;
+      chatTitle.textContent = g.name;
+      chatSubtitle.textContent = `${g.members.length} member${g.members.length>1?'s':''} • last: ${g.messages.length ? formatTime(g.messages[g.messages.length-1].ts) : 'no messages'}`;
+      chatAvatar.textContent = safeInitials(g.name);
+      renderGroupList(searchBar.value || '');
+      renderMessages();
+      // close sidebar on mobile
+      closeSidebar();
+    }
+
+    /* -------------------------
+       Event handlers
+       ------------------------- */
+
+    // Toggle sidebar (mobile)
+    function openSidebar(){
+      sidebar.classList.add('mobile-open');
+      sidebarOverlay.classList.add('active');
+    }
+    function closeSidebar(){
+      sidebar.classList.remove('mobile-open');
+      sidebarOverlay.classList.remove('active');
+    }
+    hamburgerBtn.addEventListener('click', ()=> {
+      if(sidebar.classList.contains('mobile-open')) closeSidebar(); else openSidebar();
+    });
+    sidebarOverlay.addEventListener('click', closeSidebar);
+    backBtn.addEventListener('click', closeSidebar);
+
+    // Search
+    searchBar.addEventListener('input', (e)=> renderGroupList(e.target.value));
+
+    // Send message (enter to send, shift+enter newline)
+    sendBtn.addEventListener('click', sendMessage);
+    messageInput.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' && !e.shiftKey){
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    function sendMessage(){
+      const text = messageInput.value.trim();
+      if(!text || !activeGroupId) return;
+      const g = groups.find(x=>x.id===activeGroupId);
+      if(!g) return;
+      const m = { sender: userName || 'You', text, ts: Date.now() };
+      g.messages.push(m);
+      messageInput.value = '';
+      renderMessages();
+      renderGroupList(searchBar.value || '');
+    }
+
+    // Create group
+    createGroupBtn.addEventListener('click', ()=> createGroupModal.show());
+    createGroupForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      const name = document.getElementById('newGroupName').value.trim();
+      const membersRaw = document.getElementById('newGroupMembers').value.trim();
+      if(!name) return;
+      const members = membersRaw ? membersRaw.split(',').map(s=>s.trim()).filter(Boolean) : [userName];
+      if(!members.includes(userName)) members.unshift(userName);
+      const newGroup = { id: cryptoRandomId(), name, members, messages: [{ sender: userName, text: `Group "${name}" created`, ts: Date.now() }] };
+      groups.unshift(newGroup); // show on top
+      createGroupModal.hide();
+      document.getElementById('newGroupName').value = '';
+      document.getElementById('newGroupMembers').value = '';
+      renderGroupList('');
+      selectGroup(newGroup.id);
+    });
+
+    // Theme toggle with persistence
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const rootBody = document.body;
+    function loadTheme(){
+      const saved = localStorage.getItem('apex_theme') || 'light';
+      rootBody.dataset.theme = saved;
+    }
+    themeToggleBtn.addEventListener('click', ()=>{
+      const next = rootBody.dataset.theme === 'light' ? 'dark' : 'light';
+      rootBody.dataset.theme = next;
+      localStorage.setItem('apex_theme', next);
+    });
+    loadTheme();
+
+    // Logout stub
+    document.getElementById('logoutBtn').addEventListener('click', (e)=>{
+      e.preventDefault();
+      alert('Logout clicked — implement your auth flow here.');
+    });
+
+    // initial render
+    renderGroupList();
+
+    // helper: escape text for safe insertion
+    function escapeHtml(str = ''){
+      return String(str)
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'",'&#039;');
+    }
+
+    // small accessibility: adjust textarea height
+    function autoResizeTextarea(el){
+      el.style.height = 'auto';
+      el.style.height = (el.scrollHeight) + 'px';
+    }
+    messageInput.addEventListener('input', ()=> autoResizeTextarea(messageInput));
+    autoResizeTextarea(messageInput);
+
+    // expose selectGroup for debugging
+    window.selectGroup = selectGroup;
+  </script>
 </body>
 </html>

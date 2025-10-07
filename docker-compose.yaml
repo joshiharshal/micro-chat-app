@@ -69,15 +69,6 @@ services:
     depends_on:
       - postgres
 
-  analytics-service:
-    build: ./analytics-service
-    expose:
-      - "8000"
-    environment:
-      DATABASE_URL: postgres://chat_user:chat_pass@postgres:5432/chat_db
-    depends_on:
-      - postgres
-
   gateway:
     build:
       context: .
@@ -93,7 +84,6 @@ services:
       - group-service
       - notification-service
       - media-service
-      - analytics-service
 
   postgres:
     image: postgres:15

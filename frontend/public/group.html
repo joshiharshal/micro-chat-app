@@ -3,11 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ApexChat - Groups</title>
+  <title>VartaChat - Groups</title>
+
+  <!-- Bootstrap & FontAwesome -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+
   <style>
-    :root{
+    :root {
       --primary-color:#6366f1;
       --secondary-color:#8b5cf6;
       --bg-color:#f8fafc;
@@ -21,7 +24,7 @@
       --group-avatar-bg:#10b981;
       --sent-bg:#e0e7ff;
     }
-    [data-theme="dark"]{
+    [data-theme="dark"] {
       --bg-color:#0f0f23;
       --sidebar-bg:#1a1a2e;
       --chat-bg:#1e293b;
@@ -33,443 +36,440 @@
       --sent-bg:#4f46e5;
     }
 
-    html,body{height:100%}
-    body{
-      background:var(--bg-color);
-      color:var(--text-primary);
+    html, body {
+      height: 100%;
+      background: var(--bg-color);
+      color: var(--text-primary);
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin:0;
-      display:flex;
-      flex-direction:column;
-      height:100vh;
-      overflow:hidden;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
     }
 
     /* NAVBAR */
-    .navbar{
-      background:var(--primary-color);
-      padding:.5rem 1rem;
-      box-shadow:var(--shadow);
-      z-index:1000;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
+    .navbar {
+      background: var(--primary-color);
+      box-shadow: var(--shadow);
     }
-    .navbar-brand{font-size:1.15rem;font-weight:600;color:#fff;text-decoration:none}
-    .user-nav{display:flex;align-items:center;gap:1rem}
-    .user-avatar-nav{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600}
-    .hamburger{color:#fff;font-size:1.4rem;cursor:pointer;display:none}
+    .navbar-brand {
+      color: #fff !important;
+      font-weight: 600;
+      font-size: 1.2rem;
+    }
+    .nav-link {
+      color: #f1f5f9 !important;
+      transition: color 0.2s;
+    }
+    .nav-link:hover {
+      color: #fff !important;
+    }
+    .user-avatar-nav {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 600;
+      margin-right: .5rem;
+    }
+    .theme-toggle {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.2rem;
+      margin-left: .75rem;
+      cursor: pointer;
+    }
 
     /* LAYOUT */
-    .main-container{flex:1;display:flex;overflow:hidden}
-    .sidebar{
-      width:36%;
-      max-width:420px;
-      background:var(--sidebar-bg);
-      border-right:1px solid var(--border-color);
-      display:flex;flex-direction:column;transition:transform .25s ease;
-      z-index:1001;
+    .main-container {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
     }
-    .sidebar.mobile-hidden{transform:translateX(-100%)}
-    .sidebar-header{padding:1rem;border-bottom:1px solid var(--border-color);display:flex;justify-content:space-between;align-items:center}
-    .search-bar{width:calc(100% - 2rem);margin:0 1rem 1rem 1rem;padding:.65rem;border:1px solid var(--border-color);border-radius:.5rem;background:var(--bg-color)}
-    .group-list{list-style:none;padding:0;margin:0;overflow:auto;flex:1}
-    .group-item{display:flex;align-items:center;padding:1rem;border-bottom:1px solid var(--border-color);cursor:pointer;transition:background .15s}
-    .group-item:hover,.group-item.active{background:var(--bg-color)}
-    .group-avatar{width:50px;height:50px;border-radius:50%;background:var(--group-avatar-bg);color:#fff;display:flex;align-items:center;justify-content:center;margin-right:1rem;font-weight:700;flex-shrink:0}
-    .group-details{flex:1;min-width:0}
-    .group-name{font-weight:700;margin-bottom:.25rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .group-preview{color:var(--text-secondary);font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .member-badge{background:var(--secondary-color);color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.75rem;margin-left:.5rem;flex-shrink:0}
+    .sidebar {
+      width: 36%;
+      max-width: 420px;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      transition: transform .25s ease;
+      z-index: 1001;
+    }
+    .sidebar.mobile-hidden { transform: translateX(-100%) }
+    .sidebar-header {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .search-bar {
+      width: calc(100% - 2rem);
+      margin: 0 1rem 1rem 1rem;
+      padding: .65rem;
+      border: 1px solid var(--border-color);
+      border-radius: .5rem;
+      background: var(--bg-color);
+    }
+    .group-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      overflow: auto;
+      flex: 1;
+    }
+    .group-item {
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .group-item:hover, .group-item.active {
+      background: var(--bg-color);
+    }
+    .group-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--group-avatar-bg);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 1rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .group-name {
+      font-weight: 700;
+      margin-bottom: .25rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .group-preview {
+      color: var(--text-secondary);
+      font-size: .9rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
     /* CHAT AREA */
-    .chat-area{flex:1;display:flex;flex-direction:column;background:var(--chat-bg);position:relative}
-    .chat-header{padding:1rem;background:var(--sidebar-bg);border-bottom:1px solid var(--border-color);display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:10}
-    .back-btn{display:none;color:var(--text-secondary);cursor:pointer;font-size:1.25rem}
-    .chat-avatar{width:44px;height:44px;border-radius:50%;background:var(--group-avatar-bg);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
-    .chat-title-section{flex:1;min-width:0}
-    .chat-title{font-weight:700;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .chat-subtitle{font-size:.875rem;color:var(--text-secondary);margin:0}
-    .chat-actions{display:flex;gap:.5rem}
+    .chat-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--chat-bg);
+      position: relative;
+    }
+    .chat-header {
+      padding: 1rem;
+      background: var(--sidebar-bg);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .chat-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--group-avatar-bg);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .chat-title {
+      font-weight: 700;
+      margin: 0;
+    }
+    .chat-subtitle {
+      font-size: .875rem;
+      color: var(--text-secondary);
+    }
 
-    .messages-container{flex:1;overflow:auto;padding:1rem;display:flex;flex-direction:column;gap:.5rem}
-    .no-group-selected{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text-secondary);font-style:italic;padding:2rem}
-    .no-group-selected i{font-size:4rem;margin-bottom:1rem;color:var(--text-secondary)}
+    .messages-container {
+      flex: 1;
+      overflow: auto;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+    }
+    .message {
+      max-width: 80%;
+      display: flex;
+      flex-direction: column;
+    }
+    .message.sent { align-self: flex-end; text-align: right }
+    .message.received { align-self: flex-start; text-align: left }
+    .message-bubble {
+      padding: .65rem 1rem;
+      border-radius: 12px;
+      background: var(--message-bubble);
+    }
+    .message.sent .message-bubble {
+      background: var(--sent-bg);
+      color: var(--text-primary);
+      border-bottom-right-radius: 6px;
+    }
+    .message.received .message-bubble {
+      border-bottom-left-radius: 6px;
+    }
+    .message-time {
+      font-size: .75rem;
+      color: var(--text-secondary);
+      margin-top: .25rem;
+    }
 
-    /* Message items */
-    .message{max-width:80%;display:flex;flex-direction:column;animation:fadeIn .25s}
-    .message.sent{align-self:flex-end;text-align:right}
-    .message.received{align-self:flex-start;text-align:left}
-    .sender-name{font-weight:700;color:var(--primary-color);font-size:.85rem;margin-bottom:.25rem}
-    .message-bubble{padding:.65rem 1rem;border-radius:12px;background:var(--message-bubble);box-shadow:0 1px 0 rgba(0,0,0,0.02)}
-    .message.sent .message-bubble{background:var(--sent-bg);color:var(--text-primary);border-bottom-right-radius:6px}
-    .message.received .message-bubble{background:var(--message-bubble);border-bottom-left-radius:6px}
-    .message-time{font-size:.75rem;color:var(--text-secondary);margin-top:.25rem}
+    .input-area {
+      padding: 1rem;
+      border-top: 1px solid var(--border-color);
+      background: var(--sidebar-bg);
+      display: flex;
+      gap: 1rem;
+      align-items: flex-end;
+    }
+    .message-input {
+      flex: 1;
+      padding: .75rem 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 2rem;
+      background: var(--bg-color);
+      resize: none;
+      min-height: 48px;
+    }
+    .send-btn {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: none;
+      background: var(--primary-color);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-    .input-area{padding:1rem;border-top:1px solid var(--border-color);background:var(--sidebar-bg);display:flex;gap:1rem;align-items:flex-end}
-    .message-input{flex:1;padding:.75rem 1rem;border:1px solid var(--border-color);border-radius:2rem;background:var(--bg-color);resize:none;min-height:48px}
-    .send-btn{width:46px;height:46px;border-radius:50%;border:none;background:var(--primary-color);color:#fff;display:flex;align-items:center;justify-content:center}
-
-    /* overlay */
-    .sidebar-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.45);z-index:1000;display:none}
-    .sidebar-overlay.active{display:block}
-
-    @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-
-    /* Mobile */
-    @media(max-width:768px){
-      .hamburger{display:block}
-      .sidebar{position:fixed;height:100vh;width:80%;max-width:360px;transform:translateX(-100%);z-index:1002}
-      .sidebar.mobile-open{transform:translateX(0)}
-      .back-btn{display:block}
-      .navbar-brand{display:none}
-      .chat-area{width:100%}
+    @media (max-width:768px) {
+      .sidebar {
+        position: fixed;
+        height: 100vh;
+        width: 80%;
+        max-width: 360px;
+        transform: translateX(-100%);
+        z-index: 1002;
+      }
+      .sidebar.mobile-open {
+        transform: translateX(0);
+      }
     }
   </style>
 </head>
 <body data-theme="light">
-  <!-- Navbar -->
-  <nav class="navbar">
-    <div class="d-flex align-items-center">
-      <i class="fas fa-bars hamburger me-2" id="hamburgerBtn" role="button" aria-label="Toggle sidebar"></i>
-      <a class="navbar-brand" href="#"><i class="fas fa-users"></i>&nbsp;ApexChat Groups</a>
-    </div>
 
-    <div class="user-nav align-items-center">
-      <a class="nav-link text-white" href="#notifications" title="Notifications"><i class="fas fa-bell"></i></a>
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="home.html"><i class="fas fa-comments"></i> VartaChat</a>
 
-      <div class="dropdown">
-        <a class="d-flex align-items-center text-white text-decoration-none" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-          <div class="user-avatar-nav me-2" id="userAvatar">Y</div>
-          <span id="userName">You</span>
-        </a>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-          <li><a class="dropdown-item" href="profile.html">Profile</a></li>
-          <li><a class="dropdown-item" href="#" id="logoutBtn">Logout</a></li>
+      <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="chat.html">Chat</a></li>
+          <li class="nav-item"><a class="nav-link active" href="group.html">Groups</a></li>
+          <li class="nav-item"><a class="nav-link" href="profile.html">Profile</a></li>
+        </ul>
+        <ul class="navbar-nav">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+              <div class="user-avatar-nav" id="userAvatar">G</div>
+              <span id="userName">Guest</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="#settings">Settings</a></li>
+              <li><a class="dropdown-item" href="login.html">Login</a></li>
+              <li><a class="dropdown-item" href="#" id="logoutBtn">Logout</a></li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <button class="theme-toggle" id="themeToggleBtn" title="Toggle Theme">
+              <i class="fas fa-moon"></i>
+            </button>
+          </li>
         </ul>
       </div>
-
-      <button class="btn btn-sm btn-outline-light ms-2" id="themeToggleBtn" title="Toggle theme"><i class="fas fa-moon"></i></button>
     </div>
   </nav>
 
-  <!-- Main -->
+  <!-- MAIN -->
   <div class="main-container">
-    <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
         <h5 class="mb-0">Groups</h5>
         <i class="fas fa-plus" id="createGroupBtn" role="button" title="New group" style="color:var(--primary-color);cursor:pointer"></i>
       </div>
-
-      <input id="searchBar" class="search-bar" placeholder="Search groups..." aria-label="Search groups" />
-
-      <ul class="group-list" id="groupList" aria-live="polite"></ul>
+      <input id="searchBar" class="search-bar" placeholder="Search groups..." />
+      <ul class="group-list" id="groupList"></ul>
     </aside>
 
-    <!-- Chat / Group area -->
     <section class="chat-area" id="chatArea">
       <header class="chat-header">
-        <i class="fas fa-arrow-left back-btn" id="backBtn" role="button" aria-label="Back"></i>
         <div class="chat-avatar" id="chatAvatar">G</div>
-        <div class="chat-title-section">
-          <h4 id="chatTitle" class="mb-0 chat-title">Select a Group</h4>
-          <p id="chatSubtitle" class="chat-subtitle">Choose a group on the left to view messages</p>
-        </div>
-
-        <div class="chat-actions">
-          <button class="btn btn-sm btn-light btn-chat" title="Group Info" id="groupInfoBtn"><i class="fas fa-info-circle"></i></button>
-          <button class="btn btn-sm btn-light btn-chat" title="Add member" id="addMemberBtn"><i class="fas fa-user-plus"></i></button>
+        <div>
+          <h4 id="chatTitle" class="chat-title">Select a Group</h4>
+          <p id="chatSubtitle" class="chat-subtitle">Choose a group to start</p>
         </div>
       </header>
 
       <div class="messages-container" id="messagesContainer">
-        <div class="no-group-selected">
-          <i class="fas fa-users"></i>
-          <p class="mt-3">No group selected — pick one to start viewing the conversation.</p>
-        </div>
+        <div class="text-center text-secondary mt-5">No group selected</div>
       </div>
 
       <div class="input-area">
-        <textarea id="messageInput" class="message-input" placeholder="Write a message to the group..." rows="1"></textarea>
-        <button id="sendBtn" class="send-btn" title="Send"><i class="fas fa-paper-plane"></i></button>
+        <textarea id="messageInput" class="message-input" placeholder="Write a message..." rows="1"></textarea>
+        <button id="sendBtn" class="send-btn"><i class="fas fa-paper-plane"></i></button>
       </div>
     </section>
   </div>
 
-  <!-- Overlay for mobile -->
-  <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-  <!-- Create Group Modal -->
-  <div class="modal fade" id="createGroupModal" tabindex="-1" aria-labelledby="createGroupModalLabel" aria-hidden="true">
+  <!-- MODAL -->
+  <div class="modal fade" id="createGroupModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <form id="createGroupForm" class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="createGroupModalLabel">Create new group</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <h5 class="modal-title">Create new group</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
           <div class="mb-3">
             <label for="newGroupName" class="form-label">Group name</label>
-            <input id="newGroupName" class="form-control" required maxlength="60" placeholder="e.g. DevOps Squad" />
+            <input id="newGroupName" class="form-control" required placeholder="e.g. DevOps Squad" />
           </div>
           <div class="mb-3">
-            <label for="newGroupMembers" class="form-label">Members (comma separated)</label>
+            <label for="newGroupMembers" class="form-label">Members</label>
             <input id="newGroupMembers" class="form-control" placeholder="Alice, Bob, Charlie" />
-            <div class="form-text">You can add members now; they can be updated later.</div>
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary">Create Group</button>
+          <button type="submit" class="btn btn-primary">Create</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-    /* -----------------------------
-       Simple front-end-only groups demo
-       ----------------------------- */
-
-    const userName = (document.getElementById('userName').innerText || 'You').trim();
-    const sidebar = document.getElementById('sidebar');
-    const sidebarOverlay = document.getElementById('sidebarOverlay');
-    const hamburgerBtn = document.getElementById('hamburgerBtn');
-    const backBtn = document.getElementById('backBtn');
+    // Basic functionality
+    const userName = document.getElementById('userName').innerText || 'You';
+    const messageInput = document.getElementById('messageInput');
+    const sendBtn = document.getElementById('sendBtn');
     const groupListEl = document.getElementById('groupList');
-    const messagesContainer = document.getElementById('messagesContainer');
     const chatTitle = document.getElementById('chatTitle');
     const chatSubtitle = document.getElementById('chatSubtitle');
     const chatAvatar = document.getElementById('chatAvatar');
-    const searchBar = document.getElementById('searchBar');
-    const messageInput = document.getElementById('messageInput');
-    const sendBtn = document.getElementById('sendBtn');
-    const createGroupBtn = document.getElementById('createGroupBtn');
+    const messagesContainer = document.getElementById('messagesContainer');
     const createGroupModal = new bootstrap.Modal(document.getElementById('createGroupModal'));
     const createGroupForm = document.getElementById('createGroupForm');
 
-    // Sample groups (front-end only)
     let groups = [
-      {
-        id: cryptoRandomId(),
-        name: "DevOps Squad",
-        members: ["Harshal", "Aditi", "Rohan", "Sana"],
-        messages: [
-          { sender: "Aditi", text: "Morning team — deployment at 11:00.", ts: Date.now() - 1000*60*60 },
-          { sender: "You", text: "Got it! I'll monitor the rollout.", ts: Date.now() - 1000*60*40 },
-        ]
-      },
-      {
-        id: cryptoRandomId(),
-        name: "Frontend Masters",
-        members: ["Riya", "Jay", "Ankit"],
-        messages: [
-          { sender: "Jay", text: "Pushed the CSS fixes.", ts: Date.now() - 1000*60*60*4 },
-          { sender: "Riya", text: "Looks good on mobile.", ts: Date.now() - 1000*60*60*3.5 }
-        ]
-      },
-      {
-        id: cryptoRandomId(),
-        name: "Random",
-        members: ["Sana", "Harshal"],
-        messages: [
-          { sender: "Sana", text: "Movie night tomorrow?", ts: Date.now() - 1000*60*60*24 }
-        ]
-      }
+      { id: '1', name: 'DevOps Squad', members: ['Harshal', 'Aditi', 'Rohan'], messages: [{sender:'Aditi',text:'Morning team!',ts:Date.now()-3600000}] },
+      { id: '2', name: 'Frontend Masters', members: ['Riya','Jay','Ankit'], messages: [{sender:'Jay',text:'CSS updated!',ts:Date.now()-7200000}] }
     ];
-
     let activeGroupId = null;
 
-    /* -------------------------
-       Utilities
-       ------------------------- */
-    function cryptoRandomId(){ return 'g_' + Math.random().toString(36).slice(2,10); }
-    function formatTime(ts){
-      const d = new Date(ts);
-      return d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-    }
-    function safeInitials(name){
-      if(!name) return '?';
-      return name.split(' ').map(p => p[0]?.toUpperCase()).slice(0,2).join('');
-    }
-
-    /* -------------------------
-       Render functions
-       ------------------------- */
-    function renderGroupList(filter = ''){
+    function renderGroupList() {
       groupListEl.innerHTML = '';
-      const query = filter.trim().toLowerCase();
-      const filtered = groups.filter(g=>{
-        if(!query) return true;
-        return g.name.toLowerCase().includes(query) || g.members.join(' ').toLowerCase().includes(query);
-      });
-      if(filtered.length === 0){
-        groupListEl.innerHTML = '<li class="p-3 text-muted">No groups found.</li>';
-        return;
-      }
-      filtered.forEach(g=>{
-        const lastMsg = g.messages[g.messages.length-1];
-        const preview = lastMsg ? (lastMsg.sender + ': ' + (lastMsg.text.length>40 ? lastMsg.text.slice(0,40)+'…' : lastMsg.text)) : 'No messages yet';
+      groups.forEach(g => {
         const li = document.createElement('li');
         li.className = 'group-item' + (g.id === activeGroupId ? ' active' : '');
-        li.innerHTML = `
-          <div class="group-avatar">${safeInitials(g.name)}</div>
-          <div class="group-details">
-            <div class="d-flex align-items-center">
-              <div class="group-name">${escapeHtml(g.name)}</div>
-              <div class="member-badge ms-2" title="${g.members.length} members">${g.members.length}</div>
-            </div>
-            <div class="group-preview">${escapeHtml(preview)}</div>
-          </div>
-        `;
-        li.onclick = ()=> selectGroup(g.id);
+        li.innerHTML = `<div class="group-avatar">${g.name[0]}</div>
+          <div><div class="group-name">${g.name}</div>
+          <div class="group-preview">${g.messages[g.messages.length-1]?.text || 'No messages'}</div></div>`;
+        li.onclick = () => selectGroup(g.id);
         groupListEl.appendChild(li);
       });
     }
 
-    function renderMessages(){
+    function renderMessages() {
       messagesContainer.innerHTML = '';
       const g = groups.find(x=>x.id===activeGroupId);
-      if(!g){
-        messagesContainer.innerHTML = `<div class="no-group-selected"><i class="fas fa-users"></i><p class="mt-3">No group selected — pick one to start viewing the conversation.</p></div>`;
-        return;
-      }
-      g.messages.forEach(msg => {
-        const isYou = String(msg.sender).toLowerCase() === String(userName).toLowerCase() || msg.sender === 'You';
-        const item = document.createElement('div');
-        item.className = 'message ' + (isYou ? 'sent' : 'received');
-        item.innerHTML = `
-          ${!isYou ? `<div class="sender-name">${escapeHtml(msg.sender)}</div>` : ''}
-          <div class="message-bubble">${escapeHtml(msg.text)}</div>
-          <div class="message-time">${formatTime(msg.ts)}</div>
-        `;
-        messagesContainer.appendChild(item);
+      if(!g) return;
+      g.messages.forEach(m=>{
+        const div=document.createElement('div');
+        div.className='message '+(m.sender===userName?'sent':'received');
+        div.innerHTML=`<div class="message-bubble">${m.text}</div>
+          <div class="message-time">${new Date(m.ts).toLocaleTimeString()}</div>`;
+        messagesContainer.appendChild(div);
       });
-      // scroll to bottom
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 
-    function selectGroup(id){
+    function selectGroup(id) {
       activeGroupId = id;
       const g = groups.find(x=>x.id===id);
-      if(!g) return;
       chatTitle.textContent = g.name;
-      chatSubtitle.textContent = `${g.members.length} member${g.members.length>1?'s':''} • last: ${g.messages.length ? formatTime(g.messages[g.messages.length-1].ts) : 'no messages'}`;
-      chatAvatar.textContent = safeInitials(g.name);
-      renderGroupList(searchBar.value || '');
+      chatSubtitle.textContent = `${g.members.length} members`;
+      chatAvatar.textContent = g.name[0];
+      renderGroupList();
       renderMessages();
-      // close sidebar on mobile
-      closeSidebar();
     }
 
-    /* -------------------------
-       Event handlers
-       ------------------------- */
-
-    // Toggle sidebar (mobile)
-    function openSidebar(){
-      sidebar.classList.add('mobile-open');
-      sidebarOverlay.classList.add('active');
-    }
-    function closeSidebar(){
-      sidebar.classList.remove('mobile-open');
-      sidebarOverlay.classList.remove('active');
-    }
-    hamburgerBtn.addEventListener('click', ()=> {
-      if(sidebar.classList.contains('mobile-open')) closeSidebar(); else openSidebar();
-    });
-    sidebarOverlay.addEventListener('click', closeSidebar);
-    backBtn.addEventListener('click', closeSidebar);
-
-    // Search
-    searchBar.addEventListener('input', (e)=> renderGroupList(e.target.value));
-
-    // Send message (enter to send, shift+enter newline)
-    sendBtn.addEventListener('click', sendMessage);
-    messageInput.addEventListener('keydown', function(e){
-      if(e.key === 'Enter' && !e.shiftKey){
-        e.preventDefault();
-        sendMessage();
-      }
-    });
-
-    function sendMessage(){
+    sendBtn.onclick = () => {
       const text = messageInput.value.trim();
       if(!text || !activeGroupId) return;
       const g = groups.find(x=>x.id===activeGroupId);
-      if(!g) return;
-      const m = { sender: userName || 'You', text, ts: Date.now() };
-      g.messages.push(m);
-      messageInput.value = '';
+      g.messages.push({sender:userName,text,ts:Date.now()});
+      messageInput.value='';
       renderMessages();
-      renderGroupList(searchBar.value || '');
-    }
+      renderGroupList();
+    };
 
-    // Create group
-    createGroupBtn.addEventListener('click', ()=> createGroupModal.show());
-    createGroupForm.addEventListener('submit', function(e){
+    createGroupForm.onsubmit = e => {
       e.preventDefault();
       const name = document.getElementById('newGroupName').value.trim();
-      const membersRaw = document.getElementById('newGroupMembers').value.trim();
+      const members = (document.getElementById('newGroupMembers').value || '').split(',').map(x=>x.trim()).filter(Boolean);
       if(!name) return;
-      const members = membersRaw ? membersRaw.split(',').map(s=>s.trim()).filter(Boolean) : [userName];
-      if(!members.includes(userName)) members.unshift(userName);
-      const newGroup = { id: cryptoRandomId(), name, members, messages: [{ sender: userName, text: `Group "${name}" created`, ts: Date.now() }] };
-      groups.unshift(newGroup); // show on top
+      const newGroup = {id:Date.now().toString(),name,members,messages:[]};
+      groups.unshift(newGroup);
       createGroupModal.hide();
-      document.getElementById('newGroupName').value = '';
-      document.getElementById('newGroupMembers').value = '';
-      renderGroupList('');
+      renderGroupList();
       selectGroup(newGroup.id);
-    });
+    };
 
-    // Theme toggle with persistence
-    const themeToggleBtn = document.getElementById('themeToggleBtn');
-    const rootBody = document.body;
-    function loadTheme(){
-      const saved = localStorage.getItem('apex_theme') || 'light';
-      rootBody.dataset.theme = saved;
-    }
-    themeToggleBtn.addEventListener('click', ()=>{
-      const next = rootBody.dataset.theme === 'light' ? 'dark' : 'light';
-      rootBody.dataset.theme = next;
-      localStorage.setItem('apex_theme', next);
-    });
+    document.getElementById('logoutBtn').onclick = ()=> alert('Implement logout here');
+
+    // Theme toggle
+    const themeToggleBtn=document.getElementById('themeToggleBtn');
+    function loadTheme(){document.body.dataset.theme=localStorage.getItem('theme')||'light'}
+    themeToggleBtn.onclick=()=>{
+      const next=document.body.dataset.theme==='light'?'dark':'light';
+      document.body.dataset.theme=next;
+      localStorage.setItem('theme',next);
+    };
     loadTheme();
-
-    // Logout stub
-    document.getElementById('logoutBtn').addEventListener('click', (e)=>{
-      e.preventDefault();
-      alert('Logout clicked — implement your auth flow here.');
-    });
-
-    // initial render
     renderGroupList();
-
-    // helper: escape text for safe insertion
-    function escapeHtml(str = ''){
-      return String(str)
-        .replaceAll('&','&amp;')
-        .replaceAll('<','&lt;')
-        .replaceAll('>','&gt;')
-        .replaceAll('"','&quot;')
-        .replaceAll("'",'&#039;');
-    }
-
-    // small accessibility: adjust textarea height
-    function autoResizeTextarea(el){
-      el.style.height = 'auto';
-      el.style.height = (el.scrollHeight) + 'px';
-    }
-    messageInput.addEventListener('input', ()=> autoResizeTextarea(messageInput));
-    autoResizeTextarea(messageInput);
-
-    // expose selectGroup for debugging
-    window.selectGroup = selectGroup;
   </script>
 </body>
 </html>

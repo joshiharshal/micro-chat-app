@@ -1,409 +1,414 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ApexChat - Private Chat</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        /* --- THEME VARIABLES (Light + Dark) --- */
-        :root {
-            --primary-color: #6366f1;
-            --secondary-color: #8b5cf6;
-            --bg-color: #f8fafc;
-            --sidebar-bg: #ffffff;
-            --chat-bg: #f1f5f9;
-            --message-sent: #e0e7ff;
-            --message-received: #ffffff;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --border-color: #e2e8f0;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-                      0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --online-dot: #10b981;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VartaChat - Private Chat</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    /* --- THEME VARIABLES (Light + Dark) --- */
+    :root {
+      --primary-color: #6366f1;
+      --secondary-color: #8b5cf6;
+      --bg-color: #f8fafc;
+      --sidebar-bg: #ffffff;
+      --chat-bg: #f1f5f9;
+      --message-sent: #e0e7ff;
+      --message-received: #ffffff;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --border-color: #e2e8f0;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --online-dot: #10b981;
+    }
 
-        [data-theme="dark"] {
-            --bg-color: #0f0f23;
-            --sidebar-bg: #1a1a2e;
-            --chat-bg: #1e293b;
-            --message-sent: #4f46e5;
-            --message-received: #334155;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --border-color: #334155;
-            --online-dot: #34d399;
-        }
+    [data-theme="dark"] {
+      --bg-color: #0f0f23;
+      --sidebar-bg: #1a1a2e;
+      --chat-bg: #1e293b;
+      --message-sent: #4f46e5;
+      --message-received: #334155;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --border-color: #334155;
+      --online-dot: #34d399;
+    }
 
-        body {
-            background: var(--bg-color);
-            color: var(--text-primary);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            overflow: hidden;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+    body {
+      background: var(--bg-color);
+      color: var(--text-primary);
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
 
-        /* Navbar */
-        .navbar {
-            background: var(--primary-color);
-            padding: 0.5rem 1rem;
-            box-shadow: var(--shadow);
-            z-index: 1000;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    /* Navbar */
+    .navbar {
+      background: var(--primary-color);
+      box-shadow: var(--shadow);
+      z-index: 1000;
+    }
 
-        .navbar-brand {
-            font-size: 1.25rem;
-            font-weight: bold;
-            color: white !important;
-        }
+    .navbar-brand {
+      font-weight: bold;
+      color: #fff !important;
+    }
 
-        .user-nav {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
+    .nav-link {
+      color: #fff !important;
+    }
 
-        .user-avatar-nav {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-        }
+    .theme-toggle {
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
 
-        .hamburger {
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            display: none;
-        }
+    .user-avatar-nav {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      margin-right: 0.5rem;
+    }
 
-        /* Main Layout */
-        .main-container {
-            flex: 1;
-            display: flex;
-            overflow: hidden;
-        }
+    /* Layout */
+    .main-container {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
 
-        .sidebar {
-            width: 35%;
-            background: var(--sidebar-bg);
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.3s ease;
-        }
+    .sidebar {
+      width: 30%;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s ease;
+    }
 
-        .sidebar.mobile-hidden {
-            transform: translateX(-100%);
-        }
+    .sidebar.mobile-hidden {
+      transform: translateX(-100%);
+    }
 
-        .sidebar-header {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    .sidebar-header {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-        .search-bar {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid var(--border-color);
-            border-radius: 0.5rem;
-            background: var(--bg-color);
-            margin: 0 1rem 1rem 1rem;
-        }
+    .search-bar {
+      width: calc(100% - 2rem);
+      margin: 1rem;
+      padding: 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      background: var(--bg-color);
+    }
 
-        .contact-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 0;
-            list-style: none;
-        }
+    .contact-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0;
+      list-style: none;
+      margin: 0;
+    }
 
-        .contact-item {
-            display: flex;
-            align-items: center;
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-color);
-            cursor: pointer;
-            transition: background 0.2s;
-        }
+    .contact-item {
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
 
-        .contact-item:hover, .contact-item.active {
-            background: var(--bg-color);
-        }
+    .contact-item:hover,
+    .contact-item.active {
+      background: var(--bg-color);
+    }
 
-        .contact-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 1rem;
-            font-weight: bold;
-            position: relative;
-        }
+    .contact-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--primary-color);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 1rem;
+      font-weight: bold;
+      position: relative;
+    }
 
-        .contact-avatar.online::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 12px;
-            height: 12px;
-            background: var(--online-dot);
-            border-radius: 50%;
-            border: 2px solid var(--sidebar-bg);
-        }
+    .contact-avatar.online::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 12px;
+      height: 12px;
+      background: var(--online-dot);
+      border-radius: 50%;
+      border: 2px solid var(--sidebar-bg);
+    }
 
-        .contact-details {
-            flex: 1;
-            min-width: 0;
-        }
+    .contact-name {
+      font-weight: bold;
+    }
 
-        .contact-name {
-            font-weight: bold;
-            margin-bottom: 0.25rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+    .contact-preview {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
 
-        .contact-preview {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+    /* Chat area */
+    .chat-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--chat-bg);
+    }
 
-        /* Chat Area */
-        .chat-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: var(--chat-bg);
-        }
+    .chat-header {
+      padding: 1rem;
+      background: var(--sidebar-bg);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
 
-        .chat-header {
-            padding: 1rem;
-            background: var(--sidebar-bg);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
+    .chat-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--primary-color);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
 
-        .chat-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
+    .messages-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+    }
 
-        .messages-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-        }
+    .message {
+      max-width: 60%;
+      margin-bottom: 1rem;
+      display: flex;
+      animation: fadeIn 0.3s ease-in;
+    }
 
-        .message {
-            max-width: 60%;
-            margin-bottom: 1rem;
-            display: flex;
-            animation: fadeIn 0.3s ease-in;
-        }
+    .message.sent {
+      align-self: flex-end;
+    }
 
-        .message.sent {
-            align-self: flex-end;
-        }
+    .message.received {
+      align-self: flex-start;
+    }
 
-        .message.received {
-            align-self: flex-start;
-        }
+    .message-bubble {
+      padding: 0.75rem 1rem;
+      border-radius: 1rem;
+    }
 
-        .message-bubble {
-            padding: 0.75rem 1rem;
-            border-radius: 1rem;
-        }
+    .message.sent .message-bubble {
+      background: var(--message-sent);
+      border-bottom-right-radius: 0.25rem;
+    }
 
-        .message.sent .message-bubble {
-            background: var(--message-sent);
-            border-bottom-right-radius: 0.25rem;
-        }
+    .message.received .message-bubble {
+      background: var(--message-received);
+      border-bottom-left-radius: 0.25rem;
+    }
 
-        .message.received .message-bubble {
-            background: var(--message-received);
-            border-bottom-left-radius: 0.25rem;
-        }
+    .input-area {
+      padding: 1rem;
+      border-top: 1px solid var(--border-color);
+      background: var(--sidebar-bg);
+      display: flex;
+      gap: 1rem;
+      align-items: flex-end;
+    }
 
-        .input-area {
-            padding: 1rem;
-            border-top: 1px solid var(--border-color);
-            background: var(--sidebar-bg);
-            display: flex;
-            gap: 1rem;
-            align-items: flex-end;
-        }
+    .message-input {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 2rem;
+      background: var(--bg-color);
+      resize: none;
+      min-height: 44px;
+    }
 
-        .message-input {
-            flex: 1;
-            padding: 0.75rem 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 2rem;
-            background: var(--bg-color);
-            resize: none;
-            min-height: 44px;
-        }
+    .send-btn {
+      width: 44px;
+      height: 44px;
+      border: none;
+      border-radius: 50%;
+      background: var(--primary-color);
+      color: white;
+      cursor: pointer;
+    }
 
-        .send-btn {
-            width: 44px;
-            height: 44px;
-            border: none;
-            border-radius: 50%;
-            background: var(--primary-color);
-            color: white;
-            cursor: pointer;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-    </style>
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
 </head>
+
 <body data-theme="light">
-    <!-- Navbar -->
-   <nav class="navbar navbar-expand-lg">
-<div class="container">
-<a class="navbar-brand" href="home.html"><i class="fas fa-comments"></i> VartaChat </a>
-<ul class="navbar-nav me-auto">
-<li class="nav-item"><a class="nav-link" href="chat.html">Chat</a></li>
-<li class="nav-item"><a class="nav-link" href="group.html">Groups</a></li>
-<li class="nav-item"><a class="nav-link" href="profile.html">Profile</a></li>
-</ul>
-<ul class="navbar-nav user-nav">
-<li class="nav-item dropdown">
-<a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" id="userDropdown">
-<div class="user-avatar-nav" id="userAvatar">G</div> <span id="userName">Guest</span>
-</a>
-<ul class="dropdown-menu">
-<li><a class="dropdown-item" href="#settings">Settings</a></li>
-<li><a class="dropdown-item" href="login.html" onclick="login()">login</a></li>
-<li><a class="dropdown-item" href="#" onclick="logout()">Logout</a></li>
-</ul>
-</li>
-<li class="nav-item"><button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme"><i class="fas fa-moon"></i></button></li>
-</ul>
-</div>
-</div>
-</nav>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="home.html"><i class="fas fa-comments"></i> VartaChat</a>
 
-    <!-- Main Container -->
-    <div class="main-container">
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <h5>Contacts</h5>
-            </div>
-            <input type="text" class="search-bar" id="searchBar" placeholder="Search contacts...">
-            <ul class="contact-list" id="contactList"></ul>
-        </div>
+      <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <i class="fas fa-bars"></i>
+      </button>
 
-        <div class="chat-area" id="chatArea">
-            <header class="chat-header">
-                <div class="chat-avatar" id="chatAvatar">U</div>
-                <h5 id="chatTitle" class="mb-0">Select a contact</h5>
-            </header>
-            <div class="messages-container" id="messagesContainer">
-                <div class="no-chat-selected text-center text-secondary mt-5">
-                    <i class="fas fa-comments fa-3x mb-3"></i><br>
-                    Select a contact to start chatting
-                </div>
-            </div>
-            <div class="input-area">
-                <textarea class="message-input" id="messageInput" placeholder="Type a message..."></textarea>
-                <button class="send-btn" id="sendBtn"><i class="fas fa-paper-plane"></i></button>
-            </div>
-        </div>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="chat.html">Chat</a></li>
+          <li class="nav-item"><a class="nav-link" href="group.html">Groups</a></li>
+          <li class="nav-item"><a class="nav-link" href="profile.html">Profile</a></li>
+        </ul>
+        <ul class="navbar-nav">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+              <div class="user-avatar-nav" id="userAvatar">G</div>
+              <span id="userName">Guest</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="#settings">Settings</a></li>
+              <li><a class="dropdown-item" href="login.html">Login</a></li>
+              <li><a class="dropdown-item" href="#" onclick="logout()">Logout</a></li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+              <i class="fas fa-moon"></i>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <div class="main-container">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h5>Contacts</h5>
+      </div>
+      <input type="text" class="search-bar" id="searchBar" placeholder="Search contacts..." />
+      <ul class="contact-list" id="contactList"></ul>
     </div>
 
-    <script>
-        // Theme toggle
-        function toggleTheme() {
-            const body = document.body;
-            const newTheme = body.dataset.theme === "light" ? "dark" : "light";
-            body.dataset.theme = newTheme;
-        }
+    <!-- Chat Area -->
+    <div class="chat-area" id="chatArea">
+      <header class="chat-header">
+        <div class="chat-avatar" id="chatAvatar">U</div>
+        <h5 id="chatTitle" class="mb-0">Select a contact</h5>
+      </header>
+      <div class="messages-container" id="messagesContainer">
+        <div class="no-chat-selected text-center text-secondary mt-5">
+          <i class="fas fa-comments fa-3x mb-3"></i><br />
+          Select a contact to start chatting
+        </div>
+      </div>
+      <div class="input-area">
+        <textarea class="message-input" id="messageInput" placeholder="Type a message..."></textarea>
+        <button class="send-btn" id="sendBtn"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </div>
+  </div>
 
-        // Sidebar toggle (mobile)
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('mobile-hidden');
-        }
+  <script>
+    // Theme toggle
+    function toggleTheme() {
+      const body = document.body;
+      const newTheme = body.dataset.theme === "light" ? "dark" : "light";
+      body.dataset.theme = newTheme;
+    }
 
-        // Dummy contacts
-        const contacts = [
-            { name: "Harshal Joshi", online: true },
-            { name: "saurabh mate", online: false },
-            { name: "pranav wadge", online: true },
-        ];
+    // Dummy contacts
+    const contacts = [
+      { name: "Harshal Joshi", online: true },
+      { name: "Saurabh Mate", online: false },
+      { name: "Pranav Wadge", online: true },
+    ];
 
-        const contactList = document.getElementById('contactList');
-        contacts.forEach(c => {
-            const li = document.createElement('li');
-            li.className = 'contact-item';
-            li.innerHTML = `
-                <div class="contact-avatar ${c.online ? 'online' : ''}">${c.name[0]}</div>
-                <div class="contact-details">
-                    <div class="contact-name">${c.name}</div>
-                    <div class="contact-preview">Click to chat...</div>
-                </div>
-            `;
-            li.onclick = () => selectChat(c.name);
-            contactList.appendChild(li);
-        });
+    const contactList = document.getElementById("contactList");
+    contacts.forEach((c) => {
+      const li = document.createElement("li");
+      li.className = "contact-item";
+      li.innerHTML = `
+        <div class="contact-avatar ${c.online ? "online" : ""}">${c.name[0]}</div>
+        <div class="contact-details">
+          <div class="contact-name">${c.name}</div>
+          <div class="contact-preview">Click to chat...</div>
+        </div>
+      `;
+      li.onclick = () => selectChat(c.name);
+      contactList.appendChild(li);
+    });
 
-        function selectChat(name) {
-            document.getElementById('chatTitle').innerText = name;
-            document.getElementById('messagesContainer').innerHTML = '';
-        }
+    function selectChat(name) {
+      document.getElementById("chatTitle").innerText = name;
+      document.getElementById("messagesContainer").innerHTML = "";
+    }
 
-        // Send message
-        document.getElementById('sendBtn').onclick = () => {
-            const input = document.getElementById('messageInput');
-            const text = input.value.trim();
-            if (!text) return;
-            const container = document.getElementById('messagesContainer');
-            const msg = document.createElement('div');
-            msg.className = 'message sent';
-            msg.innerHTML = `<div class="message-bubble">${text}</div>`;
-            container.appendChild(msg);
-            input.value = '';
-            container.scrollTop = container.scrollHeight;
-        };
-    </script>
+    // Send message
+    document.getElementById("sendBtn").onclick = () => {
+      const input = document.getElementById("messageInput");
+      const text = input.value.trim();
+      if (!text) return;
+      const container = document.getElementById("messagesContainer");
+      const msg = document.createElement("div");
+      msg.className = "message sent";
+      msg.innerHTML = `<div class="message-bubble">${text}</div>`;
+      container.appendChild(msg);
+      input.value = "";
+      container.scrollTop = container.scrollHeight;
+    };
+
+    function logout() {
+      alert("Logging out...");
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

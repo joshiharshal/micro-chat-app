@@ -3,3 +3,5 @@ uvicorn
 gunicorn
 python-multipart
 # ...any other dependencies
+psycopg2-binary
+SQLAlchemy

@@ -10,56 +10,104 @@ services:
     build: ./auth-service
     expose:
       - "8000"
+    environment:
+      DATABASE_URL: postgres://chat_user:chat_pass@postgres:5432/chat_db
+    depends_on:
+      - postgres
 
   user-service:
     build: ./user-service
     expose:
       - "8000"
+    environment:
+      DATABASE_URL: postgres://chat_user:chat_pass@postgres:5432/chat_db
+    depends_on:
+      - postgres
 
   chat-service:
     build: ./chat-service
     expose:
       - "8000"
+    environment:
+      DATABASE_URL: postgres://chat_user:chat_pass@postgres:5432/chat_db
+    depends_on:
+      - postgres
 
   message-history-service:
     build: ./message-history-service
     expose:
       - "8000"
+    environment:
+      DATABASE_URL: postgres://chat_user:chat_pass@postgres:5432/chat_db
+    depends_on:
+      - postgres
 
   group-service:
     build: ./group-service
     expose:
       - "8000"
+    environment:
+      DATABASE_URL: postgres://chat_user:chat_pass@postgres:5432/chat_db
+    depends_on:
+      - postgres
 
   notification-service:
     build: ./notification-service
     expose:
       - "8000"
+    environment:
+      DATABASE_URL: postgres://chat_user:chat_pass@postgres:5432/chat_db
+    depends_on:
+      - postgres
 
   media-service:
     build: ./media-service
     expose:
       - "8007"
+    environment:
+      DATABASE_URL: postgres://chat_user:chat_pass@postgres:5432/chat_db
+    depends_on:
+      - postgres
 
   analytics-service:
     build: ./analytics-service
     expose:
       - "8000"
+    environment:
+      DATABASE_URL: postgres://chat_user:chat_pass@postgres:5432/chat_db
+    depends_on:
+      - postgres
 
   gateway:
     build:
-     context: .
-     dockerfile: gateway/Dockerfile
+      context: .
+      dockerfile: gateway/Dockerfile
     ports:
-    - "8090:80"
+      - "8090:80"
     depends_on:
-    - frontend
-    - auth-service
-    - user-service
-    - chat-service
-    - message-history-service
-    - group-service
-    - notification-service
-    - media-service
-    - analytics-service
+      - frontend
+      - auth-service
+      - user-service
+      - chat-service
+      - message-history-service
+      - group-service
+      - notification-service
+      - media-service
+      - analytics-service
 
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: chat_user
+      POSTGRES_PASSWORD: chat_pass
+      POSTGRES_DB: chat_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  postgres_data:

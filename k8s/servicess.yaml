@@ -1,0 +1,287 @@
+# ===========================
+# Auth Service
+# ===========================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service
+  namespace: apisix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-service
+  template:
+    metadata:
+      labels:
+        app: auth-service
+    spec:
+      containers:
+      - name: auth-service
+        image: harshal001/micro-chat-app:auth-service
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+  namespace: apisix
+spec:
+  selector:
+    app: auth-service
+  ports:
+  - port: 8000
+    targetPort: 8000
+---
+# ===========================
+# User Service
+# ===========================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+  namespace: apisix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+      - name: user-service
+        image: harshal001/micro-chat-app:user-service
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+  namespace: apisix
+spec:
+  selector:
+    app: user-service
+  ports:
+  - port: 8000
+    targetPort: 8000
+---
+# ===========================
+# Chat Service
+# ===========================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chat-service
+  namespace: apisix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chat-service
+  template:
+    metadata:
+      labels:
+        app: chat-service
+    spec:
+      containers:
+      - name: chat-service
+        image: harshal001/micro-chat-app:chat-service
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chat-service
+  namespace: apisix
+spec:
+  selector:
+    app: chat-service
+  ports:
+  - port: 8000
+    targetPort: 8000
+---
+# ===========================
+# Message History Service
+# ===========================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: message-history-service
+  namespace: apisix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: message-history-service
+  template:
+    metadata:
+      labels:
+        app: message-history-service
+    spec:
+      containers:
+      - name: message-history-service
+        image: harshal001/micro-chat-app:message-history-service
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: message-history-service
+  namespace: apisix
+spec:
+  selector:
+    app: message-history-service
+  ports:
+  - port: 8000
+    targetPort: 8000
+---
+# ===========================
+# Group Service
+# ===========================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: group-service
+  namespace: apisix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: group-service
+  template:
+    metadata:
+      labels:
+        app: group-service
+    spec:
+      containers:
+      - name: group-service
+        image: harshal001/micro-chat-app:group-service
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: group-service
+  namespace: apisix
+spec:
+  selector:
+    app: group-service
+  ports:
+  - port: 8000
+    targetPort: 8000
+---
+# ===========================
+# Notification Service
+# ===========================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-service
+  namespace: apisix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-service
+  template:
+    metadata:
+      labels:
+        app: notification-service
+    spec:
+      containers:
+      - name: notification-service
+        image: harshal001/micro-chat-app:notification-service
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification-service
+  namespace: apisix
+spec:
+  selector:
+    app: notification-service
+  ports:
+  - port: 8000
+    targetPort: 8000
+---
+# ===========================
+# Media Service
+# ===========================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: media-service
+  namespace: apisix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: media-service
+  template:
+    metadata:
+      labels:
+        app: media-service
+    spec:
+      containers:
+      - name: media-service
+        image: harshal001/micro-chat-app:media-service
+        ports:
+        - containerPort: 8007
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: media-service
+  namespace: apisix
+spec:
+  selector:
+    app: media-service
+  ports:
+  - port: 8007
+    targetPort: 8007
+---
+# ===========================
+# Frontend
+# ===========================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: apisix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: harshal001/micro-chat-app:frontend
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: apisix
+spec:
+  selector:
+    app: frontend
+  ports:
+  - port: 80
+    targetPort: 80

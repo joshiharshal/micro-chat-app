@@ -14,7 +14,6 @@ spec:
     backends:
       - serviceName: frontend
         servicePort: 80
-
   - name: auth
     match:
       hosts:
@@ -24,7 +23,6 @@ spec:
     backends:
       - serviceName: auth-service
         servicePort: 8000
-
   - name: users
     match:
       hosts:
@@ -34,7 +32,6 @@ spec:
     backends:
       - serviceName: user-service
         servicePort: 8000
-
   - name: chat
     match:
       hosts:
@@ -44,7 +41,6 @@ spec:
     backends:
       - serviceName: chat-service
         servicePort: 8000
-
   - name: websocket
     match:
       hosts:
@@ -54,7 +50,6 @@ spec:
     backends:
       - serviceName: chat-service
         servicePort: 8000
-
   - name: messages
     match:
       hosts:
@@ -64,7 +59,6 @@ spec:
     backends:
       - serviceName: message-history-service
         servicePort: 8000
-
   - name: groups
     match:
       hosts:
@@ -74,7 +68,6 @@ spec:
     backends:
       - serviceName: group-service
         servicePort: 8000
-
   - name: notifications
     match:
       hosts:
@@ -84,7 +77,6 @@ spec:
     backends:
       - serviceName: notification-service
         servicePort: 8000
-
   - name: media
     match:
       hosts:

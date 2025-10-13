@@ -1,0 +1,11 @@
+apiVersion: apisix.apache.org/v2
+kind: ApisixTls
+metadata:
+  name: chat-tls
+  namespace: apisix
+spec:
+  hosts:
+    - chat.saurabhmate.cloud
+  secret:
+    name: chat-secret
+    namespace: apisix

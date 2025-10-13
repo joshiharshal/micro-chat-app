@@ -1,0 +1,96 @@
+apiVersion: apisix.apache.org/v2
+kind: ApisixRoute
+metadata:
+  name: micro-chat-routes
+  namespace: apisix
+spec:
+  http:
+  - name: frontend
+    match:
+      hosts:
+        - chat.saurabhmate.cloud
+      paths:
+        - /*
+    backends:
+      - serviceName: frontend
+        servicePort: 80
+
+  - name: auth
+    match:
+      hosts:
+        - chat.saurabhmate.cloud
+      paths:
+        - /auth/*
+    backends:
+      - serviceName: auth-service
+        servicePort: 8000
+
+  - name: users
+    match:
+      hosts:
+        - chat.saurabhmate.cloud
+      paths:
+        - /users/*
+    backends:
+      - serviceName: user-service
+        servicePort: 8000
+
+  - name: chat
+    match:
+      hosts:
+        - chat.saurabhmate.cloud
+      paths:
+        - /chat/*
+    backends:
+      - serviceName: chat-service
+        servicePort: 8000
+
+  - name: websocket
+    match:
+      hosts:
+        - chat.saurabhmate.cloud
+      paths:
+        - /ws/*
+    backends:
+      - serviceName: chat-service
+        servicePort: 8000
+
+  - name: messages
+    match:
+      hosts:
+        - chat.saurabhmate.cloud
+      paths:
+        - /messages/*
+    backends:
+      - serviceName: message-history-service
+        servicePort: 8000
+
+  - name: groups
+    match:
+      hosts:
+        - chat.saurabhmate.cloud
+      paths:
+        - /groups/*
+    backends:
+      - serviceName: group-service
+        servicePort: 8000
+
+  - name: notifications
+    match:
+      hosts:
+        - chat.saurabhmate.cloud
+      paths:
+        - /notify/*
+    backends:
+      - serviceName: notification-service
+        servicePort: 8000
+
+  - name: media
+    match:
+      hosts:
+        - chat.saurabhmate.cloud
+      paths:
+        - /media/*
+    backends:
+      - serviceName: media-service
+        servicePort: 8007

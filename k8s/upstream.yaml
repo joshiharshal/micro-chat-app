@@ -1,0 +1,79 @@
+apiVersion: apisix.apache.org/v2
+kind: ApisixUpstream
+metadata:
+  name: frontend-upstream
+  namespace: apisix
+spec:
+  type: roundrobin
+  nodes:
+    "frontend.apisix.svc.cluster.local:80": 1
+---
+apiVersion: apisix.apache.org/v2
+kind: ApisixUpstream
+metadata:
+  name: auth-upstream
+  namespace: apisix
+spec:
+  type: roundrobin
+  nodes:
+    "auth-service.apisix.svc.cluster.local:8000": 1
+---
+apiVersion: apisix.apache.org/v2
+kind: ApisixUpstream
+metadata:
+  name: user-upstream
+  namespace: apisix
+spec:
+  type: roundrobin
+  nodes:
+    "user-service.apisix.svc.cluster.local:8000": 1
+---
+apiVersion: apisix.apache.org/v2
+kind: ApisixUpstream
+metadata:
+  name: chat-upstream
+  namespace: apisix
+spec:
+  type: roundrobin
+  nodes:
+    "chat-service.apisix.svc.cluster.local:8000": 1
+---
+apiVersion: apisix.apache.org/v2
+kind: ApisixUpstream
+metadata:
+  name: message-history-upstream
+  namespace: apisix
+spec:
+  type: roundrobin
+  nodes:
+    "message-history-service.apisix.svc.cluster.local:8000": 1
+---
+apiVersion: apisix.apache.org/v2
+kind: ApisixUpstream
+metadata:
+  name: group-upstream
+  namespace: apisix
+spec:
+  type: roundrobin
+  nodes:
+    "group-service.apisix.svc.cluster.local:8000": 1
+---
+apiVersion: apisix.apache.org/v2
+kind: ApisixUpstream
+metadata:
+  name: notification-upstream
+  namespace: apisix
+spec:
+  type: roundrobin
+  nodes:
+    "notification-service.apisix.svc.cluster.local:8000": 1
+---
+apiVersion: apisix.apache.org/v2
+kind: ApisixUpstream
+metadata:
+  name: media-upstream
+  namespace: apisix
+spec:
+  type: roundrobin
+  nodes:
+    "media-service.apisix.svc.cluster.local:8007": 1

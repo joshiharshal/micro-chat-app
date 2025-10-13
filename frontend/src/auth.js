@@ -10,7 +10,7 @@ async function login() {
 
   if (res.ok) {
     localStorage.setItem("username", username);
-    window.location.href = "chat.html"; // go to chat page
+    window.location.href = "chat.html";
   } else {
     const error = await res.json();
     alert("Login failed: " + JSON.stringify(error));
